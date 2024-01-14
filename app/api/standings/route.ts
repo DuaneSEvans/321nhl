@@ -1,10 +1,30 @@
 import { z } from "zod"
-import { RawStandingSchema } from "../../types"
+import { RawStandingSchema, Standing } from "../../types"
 
 export async function GET() {
+  // https://gitlab.com/dword4/nhlapi/-/blob/master/new-api.md?ref_type=heads#standings
   const res = await fetch("https://api-web.nhle.com/v1/standings/now")
   const data = await res.json()
 
-  const standings = z.array(RawStandingSchema).parse(data.standings)
-  return Response.json({ standings })
+  const parsedStandings = z.array(RawStandingSchema).parse(data.standings)
+
+  const officialStandings: Standing[] = parsedStandings.map((standing, i) => {
+    const {
+      losses,
+      otLosses,
+      regulationPlusOtWins,
+      regulationWins,
+      shootoutWins,
+    } = standing
+
+    return {
+      ...standing,
+      regulationLosses: losses - otLosses,
+      nonRegulationLosses: otLosses,
+      nonRegulationWins: regulationPlusOtWins - regulationWins + shootoutWins,
+      leagueRank: i + 1,
+    }
+  })
+
+  return Response.json({ officialStandings })
 }

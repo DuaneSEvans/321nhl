@@ -1,12 +1,22 @@
 "use client"
 import { useQuery } from "@tanstack/react-query"
-import type { RawStanding, Standing } from "./types"
+import type { Standing } from "./types"
 import styled from "styled-components"
+import { useState } from "react"
+
+enum PointSystem {
+  REGULAR = "regular",
+  THREE_TWO_ONE_ZERO = "321",
+}
 
 export default function Standings() {
+  const [selectedPointSystem, setSelectedPointSystem] = useState<
+    PointSystem.THREE_TWO_ONE_ZERO | PointSystem.REGULAR
+  >(PointSystem.THREE_TWO_ONE_ZERO)
+
   const query = useQuery({
     queryKey: ["/api/standings"],
-    queryFn: async (): Promise<{ standings: RawStanding[] }> => {
+    queryFn: async (): Promise<{ officialStandings: Standing[] }> => {
       const response = await fetch("/api/standings")
       if (!response.ok) {
         throw new Error("Network response was not ok")
@@ -19,61 +29,135 @@ export default function Standings() {
     return <div>Loading...</div>
   }
 
-  const rawStandings = query.data.standings
-  const standings321 = calculate321Standings(rawStandings)
+  const officialStandings = query.data.officialStandings
+  const standings =
+    selectedPointSystem === PointSystem.THREE_TWO_ONE_ZERO
+      ? calculate321Standings(officialStandings)
+      : officialStandings
 
   return (
-    <main>
-      {standings321.map((alteredStanding, i) => {
-        return (
-          <TeamWrapper key={i}>
-            <TeamCard standing={alteredStanding} />
-          </TeamWrapper>
-        )
-      })}
-    </main>
+    <Layout>
+      <ToggleSystemNav>
+        <RadioButtonWrapper>
+          <input
+            type="radio"
+            id={PointSystem.THREE_TWO_ONE_ZERO}
+            name="system"
+            value={PointSystem.THREE_TWO_ONE_ZERO}
+            checked={selectedPointSystem === PointSystem.THREE_TWO_ONE_ZERO}
+            onClick={() =>
+              setSelectedPointSystem(PointSystem.THREE_TWO_ONE_ZERO)
+            }
+          />
+          <label htmlFor={PointSystem.THREE_TWO_ONE_ZERO}>3-2-1-0</label>
+        </RadioButtonWrapper>
+        <RadioButtonWrapper>
+          <input
+            type="radio"
+            id={PointSystem.REGULAR}
+            name="system"
+            value={PointSystem.REGULAR}
+            onClick={() => setSelectedPointSystem(PointSystem.REGULAR)}
+            checked={selectedPointSystem === PointSystem.REGULAR}
+          />
+          <label htmlFor={PointSystem.REGULAR}>Regular</label>
+        </RadioButtonWrapper>
+      </ToggleSystemNav>
+      <StandingsWrapper>
+        {standings.map((standing, i) => {
+          return (
+            <TeamCardWrapper key={i}>
+              <TeamCard standing={standing} />
+            </TeamCardWrapper>
+          )
+        })}
+      </StandingsWrapper>
+    </Layout>
   )
 }
 
-function calculate321Standings(rawStandings: RawStanding[]): Standing[] {
-  const standings321 = rawStandings.map((teamStanding) => {
-    const { regulationWins, regulationPlusOtWins, losses, otLosses } =
-      teamStanding
-    const nonRegulationWins = regulationPlusOtWins - regulationWins
-    const points = regulationWins * 3 + nonRegulationWins * 2 + otLosses
+function calculate321Standings(officialStandings: Standing[]): Standing[] {
+  const standings321 = officialStandings.map((teamStanding) => {
+    const points =
+      teamStanding.regulationWins * 3 +
+      teamStanding.nonRegulationWins * 2 +
+      teamStanding.nonRegulationLosses
     return {
       ...teamStanding,
-      regulationLosses: losses,
-      nonRegulationLosses: otLosses,
-      nonRegulationWins,
       points,
     }
   })
 
   // Sort by highest points
-  return standings321.sort((a, b) => b.points - a.points)
+  return standings321
+    .sort((a, b) => b.points - a.points)
+    .map((standing, i) => ({ ...standing, leagueRank: i + 1 }))
 }
-
-const TeamWrapper = styled.article`
-  padding: 1rem;
-`
 
 function TeamCard({ standing }: { standing: Standing }) {
   return (
-    <div>
-      <TeamHeader>
-        {standing.teamCommonName.default}
-        <MiniPoints>
-          ({standing.regulationWins} - {standing.nonRegulationWins} -{" "}
-          {standing.nonRegulationLosses} - {standing.regulationLosses})
-        </MiniPoints>
-      </TeamHeader>
-      <div>Points: {standing.points}</div>
-    </div>
+    <>
+      <PositionWrapper>{standing.leagueRank}</PositionWrapper>
+      <TeamContentWrapper>
+        <TeamHeader>
+          {standing.teamCommonName.default}
+          <MiniPoints>
+            ({standing.regulationWins} - {standing.nonRegulationWins} -{" "}
+            {standing.nonRegulationLosses} - {standing.regulationLosses})
+          </MiniPoints>
+        </TeamHeader>
+        <div>Points: {standing.points}</div>
+      </TeamContentWrapper>
+    </>
   )
 }
 
-const TitleWrapper = styled.div``
+const Layout = styled.main`
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+
+  --nav-height: 64px;
+`
+
+const ToggleSystemNav = styled.nav`
+  display: flex;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  justify-content: space-around;
+  height: var(--nav-height);
+  gap: 16px;
+  background-color: black;
+`
+
+const RadioButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`
+
+const TeamCardWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`
+
+const StandingsWrapper = styled.article`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: calc(var(--nav-height) + 16px);
+`
+
+const PositionWrapper = styled.span`
+  width: 2rem;
+  font-size: 2rem;
+  text-align: center;
+`
+
+const TeamContentWrapper = styled.div``
 
 const MiniPoints = styled.span`
   font-size: 0.8rem;
