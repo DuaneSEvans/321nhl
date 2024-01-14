@@ -27,7 +27,6 @@ export default function Standings() {
       {standings321.map((alteredStanding, i) => {
         return (
           <TeamWrapper key={i}>
-            <TeamHeader>{alteredStanding.teamCommonName.default}</TeamHeader>
             <TeamCard standing={alteredStanding} />
           </TeamWrapper>
         )
@@ -62,14 +61,24 @@ const TeamWrapper = styled.article`
 function TeamCard({ standing }: { standing: Standing }) {
   return (
     <div>
+      <TeamHeader>
+        {standing.teamCommonName.default}
+        <MiniPoints>
+          ({standing.regulationWins} - {standing.nonRegulationWins} -{" "}
+          {standing.nonRegulationLosses} - {standing.regulationLosses})
+        </MiniPoints>
+      </TeamHeader>
       <div>Points: {standing.points}</div>
-      <div>
-        {standing.regulationWins} - {standing.nonRegulationWins} -{" "}
-        {standing.nonRegulationLosses} - {standing.regulationLosses}
-      </div>
     </div>
   )
 }
-const TeamRow = styled.div``
+
+const TitleWrapper = styled.div``
+
+const MiniPoints = styled.span`
+  font-size: 0.8rem;
+  font-weight: lighter;
+  margin-left: 0.75rem;
+`
 
 const TeamHeader = styled.h1``
