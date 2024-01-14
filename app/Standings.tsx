@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 import type { Standing } from "./types"
 import styled from "styled-components"
 import { useState } from "react"
+import { Team } from "./Team"
 
 enum PointSystem {
   REGULAR = "regular",
@@ -45,7 +46,7 @@ export default function Standings() {
             name="system"
             value={PointSystem.THREE_TWO_ONE_ZERO}
             checked={selectedPointSystem === PointSystem.THREE_TWO_ONE_ZERO}
-            onClick={() =>
+            onChange={() =>
               setSelectedPointSystem(PointSystem.THREE_TWO_ONE_ZERO)
             }
           />
@@ -57,7 +58,7 @@ export default function Standings() {
             id={PointSystem.REGULAR}
             name="system"
             value={PointSystem.REGULAR}
-            onClick={() => setSelectedPointSystem(PointSystem.REGULAR)}
+            onChange={() => setSelectedPointSystem(PointSystem.REGULAR)}
             checked={selectedPointSystem === PointSystem.REGULAR}
           />
           <label htmlFor={PointSystem.REGULAR}>Regular</label>
@@ -66,9 +67,9 @@ export default function Standings() {
       <StandingsWrapper>
         {standings.map((standing, i) => {
           return (
-            <TeamCardWrapper key={i}>
-              <TeamCard standing={standing} />
-            </TeamCardWrapper>
+            <TeamWrapper key={i}>
+              <Team standing={standing} />
+            </TeamWrapper>
           )
         })}
       </StandingsWrapper>
@@ -90,26 +91,36 @@ function calculate321Standings(officialStandings: Standing[]): Standing[] {
 
   // Sort by highest points
   return standings321
-    .sort((a, b) => b.points - a.points)
+    .sort(byNHLStandingsRules)
     .map((standing, i) => ({ ...standing, leagueRank: i + 1 }))
 }
 
-function TeamCard({ standing }: { standing: Standing }) {
-  return (
-    <>
-      <PositionWrapper>{standing.leagueRank}</PositionWrapper>
-      <TeamContentWrapper>
-        <TeamHeader>
-          {standing.teamCommonName.default}
-          <MiniPoints>
-            ({standing.regulationWins} - {standing.nonRegulationWins} -{" "}
-            {standing.nonRegulationLosses} - {standing.regulationLosses})
-          </MiniPoints>
-        </TeamHeader>
-        <div>Points: {standing.points}</div>
-      </TeamContentWrapper>
-    </>
-  )
+/**
+ * Sort by points
+ * ====== TIE BREAKERS ======
+ * 1. If points are equal, sort by regulation + overtime wins
+ * 2. Head to head record of the two teams <-- not implemented
+ * 3. Goal differential <-- not implemented
+ * 4. Greater number of goals scored in all games during regular season <-- not implemented
+ */
+const byNHLStandingsRules = (a: Standing, b: Standing) => {
+  if (a.points > b.points) {
+    return -1
+  }
+  if (a.points < b.points) {
+    return 1
+  }
+
+  // If points are equal, sort by regulation + overtime wins
+  const aWins = a.regulationWins + a.nonRegulationWins
+  const bWins = b.regulationWins + b.nonRegulationWins
+  if (aWins > bWins) {
+    return -1
+  }
+  if (aWins < bWins) {
+    return 1
+  }
+  return 0
 }
 
 const Layout = styled.main`
@@ -138,7 +149,7 @@ const RadioButtonWrapper = styled.div`
   gap: 8px;
 `
 
-const TeamCardWrapper = styled.div`
+const TeamWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -150,19 +161,3 @@ const StandingsWrapper = styled.article`
   gap: 16px;
   margin-top: calc(var(--nav-height) + 16px);
 `
-
-const PositionWrapper = styled.span`
-  width: 2rem;
-  font-size: 2rem;
-  text-align: center;
-`
-
-const TeamContentWrapper = styled.div``
-
-const MiniPoints = styled.span`
-  font-size: 0.8rem;
-  font-weight: lighter;
-  margin-left: 0.75rem;
-`
-
-const TeamHeader = styled.h1``
