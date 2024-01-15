@@ -1,4 +1,3 @@
-import Head from "next/head"
 import QueryProvider from "./QueryProvider"
 import "./globals.css"
 import type { Metadata } from "next"
