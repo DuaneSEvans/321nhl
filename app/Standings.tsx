@@ -147,6 +147,9 @@ const RadioButtonWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  @media (prefers-color-scheme: dark) {
+    color: white;
+  }
 `
 
 const TeamWrapper = styled.div`
