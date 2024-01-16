@@ -4,7 +4,7 @@ import { RawStandingSchema, Standing } from "../../types"
 export async function GET() {
   // https://gitlab.com/dword4/nhlapi/-/blob/master/new-api.md?ref_type=heads#standings
   const res = await fetch("https://api-web.nhle.com/v1/standings/now", {
-    cache: "no-cache",
+    cache: "no-store",
   })
   const data = await res.json()
 
