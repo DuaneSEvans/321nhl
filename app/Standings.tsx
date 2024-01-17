@@ -18,7 +18,9 @@ export default function Standings() {
   const query = useQuery({
     queryKey: ["/api/standings"],
     queryFn: async (): Promise<{ officialStandings: Standing[] }> => {
-      const response = await fetch("/api/standings")
+      const response = await fetch("/api/standings", {
+        cache: "no-store",
+      })
       if (!response.ok) {
         throw new Error("Network response was not ok")
       }
