@@ -19,7 +19,7 @@ export default function Standings() {
     queryKey: ["/api/standings"],
     queryFn: async (): Promise<{ officialStandings: Standing[] }> => {
       const response = await fetch("/api/standings", {
-        next: { revalidate: 0 },
+        method: "POST",
       })
       if (!response.ok) {
         throw new Error("Network response was not ok")

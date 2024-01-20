@@ -1,13 +1,9 @@
 import { z } from "zod"
 import { RawStandingSchema, Standing } from "../../types"
 
-export const fetchCache = "force-no-store"
-
-export async function GET() {
+export async function POST() {
   // https://gitlab.com/dword4/nhlapi/-/blob/master/new-api.md?ref_type=heads#standings
-  const res = await fetch("https://api-web.nhle.com/v1/standings/now", {
-    next: { revalidate: 0 },
-  })
+  const res = await fetch("https://api-web.nhle.com/v1/standings/now")
   const data = await res.json()
 
   const parsedStandings = z.array(RawStandingSchema).parse(data.standings)
