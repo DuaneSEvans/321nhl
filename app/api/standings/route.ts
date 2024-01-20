@@ -1,6 +1,8 @@
 import { z } from "zod"
 import { RawStandingSchema, Standing } from "../../types"
 
+// This really should be a GET but Vercel insists on caching and using stale
+// data: https://github.com/vercel/vercel/discussions/10117
 export async function POST() {
   // https://gitlab.com/dword4/nhlapi/-/blob/master/new-api.md?ref_type=heads#standings
   const res = await fetch("https://api-web.nhle.com/v1/standings/now")
