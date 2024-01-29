@@ -3,12 +3,15 @@ import { useQuery } from "@tanstack/react-query"
 import type { Standing } from "./types"
 import styled from "styled-components"
 import { useState } from "react"
-import { Team } from "./Team"
+import { StandingsView } from "./StandingsView"
 
 enum PointSystem {
   REGULAR = "regular",
   THREE_TWO_ONE_ZERO = "321",
 }
+
+const views = ["Western", "Eastern", "League"] as const
+export type ViewType = (typeof views)[number]
 
 export default function Standings() {
   const [selectedPointSystem, setSelectedPointSystem] = useState<
@@ -38,6 +41,13 @@ export default function Standings() {
       ? calculate321Standings(officialStandings)
       : officialStandings
 
+  const viewStandingsWithTitle = views.map((view) => {
+    return {
+      title: view,
+      viewStandings: getViewStandings(view, standings),
+    }
+  })
+
   return (
     <Layout>
       <ToggleSystemNav>
@@ -66,15 +76,11 @@ export default function Standings() {
           <label htmlFor={PointSystem.REGULAR}>Regular</label>
         </RadioButtonWrapper>
       </ToggleSystemNav>
-      <StandingsWrapper>
-        {standings.map((standing, i) => {
-          return (
-            <TeamWrapper key={i}>
-              <Team standing={standing} />
-            </TeamWrapper>
-          )
-        })}
-      </StandingsWrapper>
+      <ContextContainer>
+        {viewStandingsWithTitle.map(({ title, viewStandings }) => (
+          <StandingsView key={title} title={title} standings={viewStandings} />
+        ))}
+      </ContextContainer>
     </Layout>
   )
 }
@@ -138,10 +144,26 @@ const byNHLStandingsRules = (a: Standing, b: Standing) => {
   return 0
 }
 
+function getViewStandings(view: ViewType, standings: Standing[]): Standing[] {
+  switch (view) {
+    case "Western":
+      return standings.filter(
+        (standing) => standing.conferenceName === "Western"
+      )
+    case "Eastern":
+      return standings.filter(
+        (standing) => standing.conferenceName === "Eastern"
+      )
+    case "League":
+      return standings
+    default:
+      throw new Error("Invalid view")
+  }
+}
+
 const Layout = styled.main`
   display: flex;
   flex-direction: column;
-  padding: 8px;
 
   --nav-height: 64px;
 `
@@ -167,15 +189,10 @@ const RadioButtonWrapper = styled.div`
   }
 `
 
-const TeamWrapper = styled.div`
+const ContextContainer = styled.section`
   display: flex;
-  align-items: center;
-  gap: 1rem;
-`
-
-const StandingsWrapper = styled.article`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
   margin-top: calc(var(--nav-height) + 16px);
+  overflow: auto;
+  width: 100%;
+  scroll-snap-type: x mandatory;
 `

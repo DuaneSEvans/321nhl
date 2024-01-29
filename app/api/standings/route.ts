@@ -10,7 +10,7 @@ export async function POST() {
 
   const parsedStandings = z.array(RawStandingSchema).parse(data.standings)
 
-  const officialStandings: Standing[] = parsedStandings.map((standing, i) => {
+  const officialStandings: Standing[] = parsedStandings.map((standing) => {
     const {
       losses,
       otLosses,
@@ -24,7 +24,6 @@ export async function POST() {
       regulationLosses: losses,
       nonRegulationLosses: otLosses,
       nonRegulationWins: regulationPlusOtWins - regulationWins + shootoutWins,
-      leagueRank: i + 1,
       change: 0,
     }
   })

@@ -2,8 +2,12 @@ import QueryProvider from "./QueryProvider"
 import "./globals.css"
 import type { Metadata } from "next"
 
+const isLocal = process.env.NODE_ENV === "development"
+const title = "3-2-1 NHL Standings"
+const devTitle = `< ${title} />`
+
 export const metadata: Metadata = {
-  title: "3-2-1 NHL Standings",
+  title: isLocal ? devTitle : title,
   description:
     "The NHL Standings if the league followed a 3-2-1-0 point system",
   icons:
