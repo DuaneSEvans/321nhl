@@ -80,21 +80,34 @@ export default function Standings() {
 }
 
 function calculate321Standings(officialStandings: Standing[]): Standing[] {
-  const standings321 = officialStandings.map((teamStanding) => {
-    const points =
-      teamStanding.regulationWins * 3 +
-      teamStanding.nonRegulationWins * 2 +
-      teamStanding.nonRegulationLosses
+  const standings321 = officialStandings
+    .map((teamStanding) => {
+      const points =
+        teamStanding.regulationWins * 3 +
+        teamStanding.nonRegulationWins * 2 +
+        teamStanding.nonRegulationLosses
+      return {
+        ...teamStanding,
+        points,
+      }
+    })
+    .sort(byNHLStandingsRules)
+
+  return standings321.map((standing, i) => {
+    const officialStandingPlace = officialStandings.findIndex(
+      (s) => s.teamCommonName === standing.teamCommonName
+    )
+    if (officialStandingPlace === -1) {
+      throw new Error("Could not find team in official standings")
+    }
+
     return {
-      ...teamStanding,
-      points,
+      ...standing,
+      leagueRank: i + 1,
+      // Subtract the regular index from the 321 index to calculate the change
+      change: officialStandingPlace - i,
     }
   })
-
-  // Sort by highest points
-  return standings321
-    .sort(byNHLStandingsRules)
-    .map((standing, i) => ({ ...standing, leagueRank: i + 1 }))
 }
 
 /**

@@ -25,6 +25,7 @@ export async function POST() {
       nonRegulationLosses: otLosses,
       nonRegulationWins: regulationPlusOtWins - regulationWins + shootoutWins,
       leagueRank: i + 1,
+      change: 0,
     }
   })
 

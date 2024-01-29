@@ -1,10 +1,13 @@
 import styled from "styled-components"
 import { Standing } from "./types"
+import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid"
 
 export function Team({ standing }: { standing: Standing }) {
   return (
     <>
       <PositionWrapper>{standing.leagueRank}</PositionWrapper>
+      <ChangeArrow change={standing.change} />
+
       <TeamContentWrapper>
         <TeamHeader>
           {standing.teamCommonName.default}
@@ -16,6 +19,22 @@ export function Team({ standing }: { standing: Standing }) {
         <div>Points: {standing.points}</div>
       </TeamContentWrapper>
     </>
+  )
+}
+
+function ChangeArrow({ change }: { change: number }): JSX.Element {
+  return change === 0 ? (
+    <span>-</span>
+  ) : change > 0 ? (
+    <span style={{ color: "green" }}>
+      <ArrowUpIcon />
+      {change}
+    </span>
+  ) : (
+    <span style={{ color: "red" }}>
+      <ArrowDownIcon />
+      {change}
+    </span>
   )
 }
 

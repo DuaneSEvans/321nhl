@@ -34,6 +34,7 @@ export const StandingSchema = z.object({
   }),
   teamLogo: z.string(),
   leagueRank: z.number(),
+  change: z.number(),
 })
 
 export type Standing = z.infer<typeof StandingSchema>
