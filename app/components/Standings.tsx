@@ -1,16 +1,25 @@
 "use client"
 import { useQuery } from "@tanstack/react-query"
-import type { Standing } from "./types"
+import type { Standing } from "../types"
 import styled from "styled-components"
 import { useState } from "react"
 import { StandingsView } from "./StandingsView"
+import { WildcardStandingsView } from "./WildcardStandingsView"
 
 enum PointSystem {
   REGULAR = "regular",
   THREE_TWO_ONE_ZERO = "321",
 }
 
-const views = ["Western", "Eastern", "League"] as const
+const views = [
+  "Pacific",
+  "Central",
+  "Western",
+  "Atlantic",
+  "Metropolitan",
+  "Eastern",
+  "League",
+] as const
 export type ViewType = (typeof views)[number]
 
 export default function Standings() {
@@ -36,15 +45,18 @@ export default function Standings() {
   }
 
   const officialStandings = query.data.officialStandings
-  const standings =
-    selectedPointSystem === PointSystem.THREE_TWO_ONE_ZERO
-      ? calculate321Standings(officialStandings)
-      : officialStandings
 
-  const viewStandingsWithTitle = views.map((view) => {
+  const calculatedStandingsWithTitle = views.map((view) => {
+    const viewStandings = getViewStandings(view, officialStandings)
+
+    const calculatedStandings =
+      selectedPointSystem === PointSystem.THREE_TWO_ONE_ZERO
+        ? calculate321Standings(viewStandings)
+        : viewStandings
+
     return {
       title: view,
-      viewStandings: getViewStandings(view, standings),
+      calculatedStandings,
     }
   })
 
@@ -77,9 +89,24 @@ export default function Standings() {
         </RadioButtonWrapper>
       </ToggleSystemNav>
       <ContextContainer>
-        {viewStandingsWithTitle.map(({ title, viewStandings }) => (
-          <StandingsView key={title} title={title} standings={viewStandings} />
-        ))}
+        {calculatedStandingsWithTitle.map(({ title, calculatedStandings }) => {
+          if (title === "Eastern" || title === "Western") {
+            return (
+              <WildcardStandingsView
+                key={title}
+                title={title}
+                standings={calculatedStandings}
+              />
+            )
+          }
+          return (
+            <StandingsView
+              key={title}
+              title={title}
+              standings={calculatedStandings}
+            />
+          )
+        })}
       </ContextContainer>
     </Layout>
   )
@@ -146,9 +173,21 @@ const byNHLStandingsRules = (a: Standing, b: Standing) => {
 
 function getViewStandings(view: ViewType, standings: Standing[]): Standing[] {
   switch (view) {
+    case "Pacific":
+      return standings.filter((standing) => standing.divisionName === "Pacific")
+    case "Central":
+      return standings.filter((standing) => standing.divisionName === "Central")
     case "Western":
       return standings.filter(
         (standing) => standing.conferenceName === "Western"
+      )
+    case "Atlantic":
+      return standings.filter(
+        (standing) => standing.divisionName === "Atlantic"
+      )
+    case "Metropolitan":
+      return standings.filter(
+        (standing) => standing.divisionName === "Metropolitan"
       )
     case "Eastern":
       return standings.filter(

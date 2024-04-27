@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { Standing } from "./types"
+import { Standing } from "../types"
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid"
 
 export function Team({ standing, rank }: { standing: Standing; rank: number }) {

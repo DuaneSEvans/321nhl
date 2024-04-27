@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import { ViewType } from "./Standings"
-import { Standing } from "./types"
+import { Standing } from "../types"
 import { Team } from "./Team"
 
 export function StandingsView({
