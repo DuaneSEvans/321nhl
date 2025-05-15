@@ -1,31 +1,16 @@
 "use client"
 import { useQuery } from "@tanstack/react-query"
-import type { Standing } from "../types"
+import { PointSystem, Scope, Standing, Conference, Division } from "../types"
 import styled from "styled-components"
 import { useState } from "react"
+import Nav from "./Nav"
 import { StandingsView } from "./StandingsView"
-import { WildcardStandingsView } from "./WildcardStandingsView"
-
-enum PointSystem {
-  REGULAR = "regular",
-  THREE_TWO_ONE_ZERO = "321",
-}
-
-const views = [
-  "Pacific",
-  "Central",
-  "Western",
-  "Atlantic",
-  "Metropolitan",
-  "Eastern",
-  "League",
-] as const
-export type ViewType = (typeof views)[number]
 
 export default function Standings() {
-  const [selectedPointSystem, setSelectedPointSystem] = useState<
-    PointSystem.THREE_TWO_ONE_ZERO | PointSystem.REGULAR
-  >(PointSystem.THREE_TWO_ONE_ZERO)
+  const [selectedPointSystem, setSelectedPointSystem] = useState<PointSystem>(
+    PointSystem.THREE_TWO_ONE_ZERO
+  )
+  const [selectedScope, setSelectedScope] = useState<Scope>("Wild Card")
 
   const query = useQuery({
     queryKey: ["/api/standings"],
@@ -45,75 +30,32 @@ export default function Standings() {
   }
 
   const officialStandings = query.data.officialStandings
-
-  const calculatedStandingsWithTitle = views.map((view) => {
-    const viewStandings = getViewStandings(view, officialStandings)
-
-    const calculatedStandings =
-      selectedPointSystem === PointSystem.THREE_TWO_ONE_ZERO
-        ? calculate321Standings(viewStandings)
-        : viewStandings
-
-    return {
-      title: view,
-      calculatedStandings,
-    }
-  })
+  const standings =
+    selectedPointSystem === PointSystem.REGULAR
+      ? officialStandings
+      : calculate321Standings(officialStandings)
 
   return (
     <Layout>
-      <ToggleSystemNav>
-        <RadioButtonWrapper>
-          <input
-            type="radio"
-            id={PointSystem.THREE_TWO_ONE_ZERO}
-            name="system"
-            value={PointSystem.THREE_TWO_ONE_ZERO}
-            checked={selectedPointSystem === PointSystem.THREE_TWO_ONE_ZERO}
-            onChange={() =>
-              setSelectedPointSystem(PointSystem.THREE_TWO_ONE_ZERO)
-            }
-          />
-          <label htmlFor={PointSystem.THREE_TWO_ONE_ZERO}>3-2-1-0</label>
-        </RadioButtonWrapper>
-        <RadioButtonWrapper>
-          <input
-            type="radio"
-            id={PointSystem.REGULAR}
-            name="system"
-            value={PointSystem.REGULAR}
-            onChange={() => setSelectedPointSystem(PointSystem.REGULAR)}
-            checked={selectedPointSystem === PointSystem.REGULAR}
-          />
-          <label htmlFor={PointSystem.REGULAR}>Regular</label>
-        </RadioButtonWrapper>
-      </ToggleSystemNav>
-      <ContextContainer>
-        {calculatedStandingsWithTitle.map(({ title, calculatedStandings }) => {
-          if (title === "Eastern" || title === "Western") {
-            return (
-              <WildcardStandingsView
-                key={title}
-                title={title}
-                standings={calculatedStandings}
-              />
-            )
-          }
-          return (
-            <StandingsView
-              key={title}
-              title={title}
-              standings={calculatedStandings}
-            />
-          )
-        })}
-      </ContextContainer>
+      <Nav
+        setSelectedPointSystem={setSelectedPointSystem}
+        selectedPointSystem={selectedPointSystem}
+        selectedScope={selectedScope}
+        setSelectedScope={setSelectedScope}
+      />
+      <ContentContainer>
+        <StandingsView
+          scope={selectedScope}
+          standings={standings}
+          officialStandings={officialStandings}
+        />
+      </ContentContainer>
     </Layout>
   )
 }
 
 function calculate321Standings(officialStandings: Standing[]): Standing[] {
-  const standings321 = officialStandings
+  return officialStandings
     .map((teamStanding) => {
       const points =
         teamStanding.regulationWins * 3 +
@@ -125,22 +67,6 @@ function calculate321Standings(officialStandings: Standing[]): Standing[] {
       }
     })
     .sort(byNHLStandingsRules)
-
-  return standings321.map((standing, i) => {
-    const officialStandingPlace = officialStandings.findIndex(
-      (s) => s.teamCommonName === standing.teamCommonName
-    )
-    if (officialStandingPlace === -1) {
-      throw new Error("Could not find team in official standings")
-    }
-
-    return {
-      ...standing,
-      leagueRank: i + 1,
-      // Subtract the regular index from the 321 index to calculate the change
-      change: officialStandingPlace - i,
-    }
-  })
 }
 
 /**
@@ -171,67 +97,14 @@ const byNHLStandingsRules = (a: Standing, b: Standing) => {
   return 0
 }
 
-function getViewStandings(view: ViewType, standings: Standing[]): Standing[] {
-  switch (view) {
-    case "Pacific":
-      return standings.filter((standing) => standing.divisionName === "Pacific")
-    case "Central":
-      return standings.filter((standing) => standing.divisionName === "Central")
-    case "Western":
-      return standings.filter(
-        (standing) => standing.conferenceName === "Western"
-      )
-    case "Atlantic":
-      return standings.filter(
-        (standing) => standing.divisionName === "Atlantic"
-      )
-    case "Metropolitan":
-      return standings.filter(
-        (standing) => standing.divisionName === "Metropolitan"
-      )
-    case "Eastern":
-      return standings.filter(
-        (standing) => standing.conferenceName === "Eastern"
-      )
-    case "League":
-      return standings
-    default:
-      throw new Error("Invalid view")
-  }
-}
-
 const Layout = styled.main`
   display: flex;
   flex-direction: column;
-
-  --nav-height: 64px;
+  --nav-height: 72px;
 `
 
-const ToggleSystemNav = styled.nav`
+const ContentContainer = styled.section`
   display: flex;
-  width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  justify-content: space-around;
-  height: var(--nav-height);
-  gap: 16px;
-  background-color: black;
-`
-
-const RadioButtonWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  @media (prefers-color-scheme: dark) {
-    color: white;
-  }
-`
-
-const ContextContainer = styled.section`
-  display: flex;
-  margin-top: calc(var(--nav-height) + 16px);
-  overflow: auto;
-  width: 100%;
-  scroll-snap-type: x mandatory;
+  flex-direction: column;
+  margin-top: var(--nav-height);
 `

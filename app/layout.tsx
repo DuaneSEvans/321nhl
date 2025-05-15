@@ -1,6 +1,14 @@
 import QueryProvider from "./QueryProvider"
 import "./globals.css"
 import type { Metadata } from "next"
+import { Montserrat } from "next/font/google"
+import "./globals.css"
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-montserrat",
+})
 
 const isLocal = process.env.NODE_ENV === "development"
 const title = "3-2-1 NHL Standings"
@@ -20,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={montserrat.variable}>
       <body>
         <QueryProvider>{children}</QueryProvider>
       </body>

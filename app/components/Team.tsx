@@ -1,8 +1,14 @@
 import styled from "styled-components"
-import { Standing } from "../types"
+import { StandingWithChange } from "../types"
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid"
 
-export function Team({ standing, rank }: { standing: Standing; rank: number }) {
+export function Team({
+  standing,
+  rank,
+}: {
+  standing: StandingWithChange
+  rank: number
+}) {
   return (
     <>
       <PositionWrapper>{rank}</PositionWrapper>

@@ -27,8 +27,30 @@ export const StandingSchema = RawStandingSchema.and(
     regulationLosses: z.number(),
     nonRegulationLosses: z.number(),
     nonRegulationWins: z.number(),
-    change: z.number(),
   })
 )
 
 export type Standing = z.infer<typeof StandingSchema>
+
+export type StandingWithChange = Standing & {
+  change: number
+}
+
+export enum PointSystem {
+  REGULAR = "regular",
+  THREE_TWO_ONE_ZERO = "321",
+}
+
+export const scopes = ["Wild Card", "Division", "Conference", "League"] as const
+export type Scope = (typeof scopes)[number]
+
+export const conferences = ["Western", "Eastern"] as const
+export type Conference = (typeof conferences)[number]
+
+export const divisions = [
+  "Pacific",
+  "Central",
+  "Atlantic",
+  "Metropolitan",
+] as const
+export type Division = (typeof divisions)[number]
