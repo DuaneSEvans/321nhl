@@ -1,6 +1,6 @@
 "use client"
 import { useQuery } from "@tanstack/react-query"
-import { PointSystem, Scope, Standing, Conference, Division } from "../types"
+import { PointSystem, Scope, Standing } from "../types"
 import styled from "styled-components"
 import { useState } from "react"
 import Nav from "./Nav"

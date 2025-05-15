@@ -32,7 +32,7 @@ export function StandingsView({
         </ViewWrapper>
       )
 
-    case "Conference":
+    case "Conference": {
       const conferences = {
         Western: standingsWithChange.filter(
           (standing) => standing.conferenceName === "Western"
@@ -58,8 +58,9 @@ export function StandingsView({
           ))}
         </ViewWrapper>
       )
+    }
 
-    case "Division":
+    case "Division": {
       const conferencesWithDivisions = {
         Western: {
           Pacific: standingsWithChange.filter(
@@ -97,8 +98,9 @@ export function StandingsView({
           )}
         </ViewWrapper>
       )
+    }
 
-    case "Wild Card":
+    case "Wild Card": {
       const pacificTop3 = standingsWithChange
         .filter((standing) => standing.divisionName === "Pacific")
         .slice(0, 3)
@@ -165,6 +167,7 @@ export function StandingsView({
           )}
         </ViewWrapper>
       )
+    }
   }
 }
 
