@@ -1,5 +1,4 @@
 import { z } from "zod"
-import type { CSSProperties } from "react"
 
 export const scopes = ["Wild Card", "Division", "Conference", "League"] as const
 export type Scope = (typeof scopes)[number]
@@ -67,7 +66,7 @@ export const THREE_TWO_ONE_ZERO_COLORS = {
   "--color-header-bg": "hsla(240, 4%, 77%, 1)",
   "--color-accent": "hsla(237, 84%, 63%, 1)",
   "--color-nav-bg": "hsla(0, 0%, 0%, 1)",
-} as CSSProperties
+}
 
 // TODO(dse): make boring-er
 export const REGULAR_COLORS = {
@@ -78,4 +77,4 @@ export const REGULAR_COLORS = {
   "--color-header-bg": "hsla(240, 4%, 77%, 1)",
   "--color-accent": "hsla(0, 0%, 100%, 1)",
   "--color-nav-bg": "hsla(0, 0%, 0%, 1)",
-} as CSSProperties
+}

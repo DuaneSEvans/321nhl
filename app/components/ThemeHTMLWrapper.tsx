@@ -6,6 +6,7 @@ import {
   REGULAR_COLORS,
 } from "../shared"
 import { usePointSystem } from "./PointSystemProvider"
+import { CSSProperties } from "react"
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -24,7 +25,7 @@ export function ThemeHTMLWrapper({ children }: { children: React.ReactNode }) {
     <html
       lang="en"
       className={montserrat.variable}
-      style={themeColors}
+      style={themeColors as CSSProperties}
       data-color-theme={pointSystem}
     >
       {children}
