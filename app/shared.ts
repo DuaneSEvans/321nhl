@@ -61,15 +61,21 @@ export enum PointSystem {
 // TODO(dse): make flashy-er
 export const THREE_TWO_ONE_ZERO_COLORS = {
   "--color-primary": "hsla(0, 0%, 100%, 1)",
+  "--color-selected-system-text": "hsla(0, 0%, 100%, 1)",
+  "--color-unselected-system-text": "hsla(210, 3%, 76%, 1)",
   "--color-secondary": "hsla(210, 3%, 76%, 1)",
   "--color-header-bg": "hsla(240, 4%, 77%, 1)",
   "--color-accent": "hsla(237, 84%, 63%, 1)",
+  "--color-nav-bg": "hsla(0, 0%, 0%, 1)",
 } as CSSProperties
 
 // TODO(dse): make boring-er
 export const REGULAR_COLORS = {
   "--color-primary": "hsla(0, 0%, 100%, 1)",
+  "--color-selected-system-text": "hsla(0, 0%, 0%, 1)",
+  "--color-unselected-system-text": "hsla(210, 3%, 76%, 1)",
   "--color-secondary": "hsla(210, 3%, 76%, 1)",
   "--color-header-bg": "hsla(240, 4%, 77%, 1)",
-  "--color-accent": "hsla(237, 84%, 63%, 1)",
+  "--color-accent": "hsla(0, 0%, 100%, 1)",
+  "--color-nav-bg": "hsla(0, 0%, 0%, 1)",
 } as CSSProperties

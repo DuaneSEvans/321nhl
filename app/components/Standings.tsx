@@ -100,7 +100,6 @@ const byNHLStandingsRules = (a: Standing, b: Standing) => {
 const Layout = styled.main`
   display: flex;
   flex-direction: column;
-  --nav-height: 82px;
 `
 
 const ContentContainer = styled.section`
