@@ -16,6 +16,8 @@ export default function Standings() {
     queryKey: ["/api/standings"],
     queryFn: async (): Promise<{ officialStandings: Standing[] }> => {
       const response = await fetch("/api/standings", {
+        // TODO(dse): This is a hack to get around vercel caching issue. I would
+        // like to fix.
         method: "POST",
       })
       if (!response.ok) {

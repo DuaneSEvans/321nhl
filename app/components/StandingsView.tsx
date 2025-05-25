@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { Scope, Standing, StandingWithChange } from "../types"
+import { divisions, Scope, Standing, StandingWithChange } from "../types"
 import { Team } from "./Team"
 
 export function StandingsView({
@@ -101,18 +101,12 @@ export function StandingsView({
     }
 
     case "Wild Card": {
-      const pacificTop3 = standingsWithChange
-        .filter((standing) => standing.divisionName === "Pacific")
-        .slice(0, 3)
-      const centralTop3 = standingsWithChange
-        .filter((standing) => standing.divisionName === "Central")
-        .slice(0, 3)
-      const atlanticTop3 = standingsWithChange
-        .filter((standing) => standing.divisionName === "Atlantic")
-        .slice(0, 3)
-      const metropolitanTop3 = standingsWithChange
-        .filter((standing) => standing.divisionName === "Metropolitan")
-        .slice(0, 3)
+      const [pacificTop3, centralTop3, atlanticTop3, metropolitanTop3] =
+        divisions.map((division) => {
+          return standingsWithChange
+            .filter((standing) => standing.divisionName === division)
+            .slice(0, 3)
+        })
 
       const conferencesWithWildCard = {
         Western: {

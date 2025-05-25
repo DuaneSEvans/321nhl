@@ -1,5 +1,21 @@
 import { z } from "zod"
 
+export const scopes = ["Wild Card", "Division", "Conference", "League"] as const
+export type Scope = (typeof scopes)[number]
+
+export const conferences = ["Western", "Eastern"] as const
+export const conferenceNamesSchema = z.enum(conferences)
+export type Conference = z.infer<typeof conferenceNamesSchema>
+
+export const divisions = [
+  "Pacific",
+  "Central",
+  "Atlantic",
+  "Metropolitan",
+] as const
+const divisionNamesSchema = z.enum(divisions)
+export type Division = z.infer<typeof divisionNamesSchema>
+
 export const RawStandingSchema = z.object({
   losses: z.number(),
   otLosses: z.number(),
@@ -16,8 +32,8 @@ export const RawStandingSchema = z.object({
   }),
   teamLogo: z.string(),
   wins: z.number(),
-  conferenceName: z.string(),
-  divisionName: z.string(),
+  conferenceName: conferenceNamesSchema,
+  divisionName: divisionNamesSchema,
 })
 
 export type RawStanding = z.infer<typeof RawStandingSchema>
@@ -40,17 +56,3 @@ export enum PointSystem {
   REGULAR = "regular",
   THREE_TWO_ONE_ZERO = "321",
 }
-
-export const scopes = ["Wild Card", "Division", "Conference", "League"] as const
-export type Scope = (typeof scopes)[number]
-
-export const conferences = ["Western", "Eastern"] as const
-export type Conference = (typeof conferences)[number]
-
-export const divisions = [
-  "Pacific",
-  "Central",
-  "Atlantic",
-  "Metropolitan",
-] as const
-export type Division = (typeof divisions)[number]
