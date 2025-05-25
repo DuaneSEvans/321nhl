@@ -5,7 +5,7 @@ import styled from "styled-components"
 import { useState } from "react"
 import Nav from "./Nav"
 import { StandingsView } from "./StandingsView"
-import { usePointSystem } from "./ThemeHTMLWrapper"
+import { usePointSystem } from "./PointSystemProvider"
 
 export default function Standings() {
   const { pointSystem } = usePointSystem()
@@ -38,11 +38,7 @@ export default function Standings() {
 
   return (
     <Layout>
-      <Nav
-        pointSystem={pointSystem}
-        selectedScope={scope}
-        setScope={setScope}
-      />
+      <Nav selectedScope={scope} setScope={setScope} />
       <ContentContainer>
         <StandingsView
           scope={scope}

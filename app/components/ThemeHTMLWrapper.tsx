@@ -5,7 +5,7 @@ import {
   THREE_TWO_ONE_ZERO_COLORS,
   REGULAR_COLORS,
 } from "../shared"
-import { createContext, useContext, useState } from "react"
+import { usePointSystem } from "./PointSystemProvider"
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -13,43 +13,21 @@ const montserrat = Montserrat({
   variable: "--font-montserrat",
 })
 
-const PointSystemContext = createContext<{
-  pointSystem: PointSystem
-  setPointSystem: (pointSystem: PointSystem) => void
-}>({
-  pointSystem: PointSystem.THREE_TWO_ONE_ZERO,
-  setPointSystem: () => {},
-})
-
 export function ThemeHTMLWrapper({ children }: { children: React.ReactNode }) {
-  const [pointSystem, setPointSystem] = useState<PointSystem>(
-    PointSystem.THREE_TWO_ONE_ZERO
-  )
-
+  const { pointSystem } = usePointSystem()
   const themeColors =
     pointSystem === PointSystem.THREE_TWO_ONE_ZERO
       ? THREE_TWO_ONE_ZERO_COLORS
       : REGULAR_COLORS
 
   return (
-    <PointSystemContext.Provider
-      value={{
-        pointSystem,
-        setPointSystem,
-      }}
+    <html
+      lang="en"
+      className={montserrat.variable}
+      style={themeColors}
+      data-color-theme={pointSystem}
     >
-      <html
-        lang="en"
-        className={montserrat.variable}
-        style={themeColors}
-        data-color-theme={pointSystem}
-      >
-        {children}
-      </html>
-    </PointSystemContext.Provider>
+      {children}
+    </html>
   )
-}
-
-export function usePointSystem() {
-  return useContext(PointSystemContext)
 }

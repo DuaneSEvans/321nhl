@@ -1,18 +1,16 @@
 "use client"
 import styled from "styled-components"
 import { PointSystem, Scope, scopes } from "../shared"
-import { usePointSystem } from "./ThemeHTMLWrapper"
+import { usePointSystem } from "./PointSystemProvider"
 
 export default function Nav({
-  pointSystem,
   selectedScope,
   setScope,
 }: {
-  pointSystem: PointSystem
   selectedScope: Scope
   setScope: (scope: Scope) => void
 }) {
-  const { setPointSystem } = usePointSystem()
+  const { pointSystem, setPointSystem } = usePointSystem()
   return (
     <Wrapper>
       <SystemNavWrapper>
