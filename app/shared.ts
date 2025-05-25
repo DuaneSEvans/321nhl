@@ -1,4 +1,5 @@
 import { z } from "zod"
+import type { CSSProperties } from "react"
 
 export const scopes = ["Wild Card", "Division", "Conference", "League"] as const
 export type Scope = (typeof scopes)[number]
@@ -56,3 +57,19 @@ export enum PointSystem {
   REGULAR = "regular",
   THREE_TWO_ONE_ZERO = "321",
 }
+
+// TODO(dse): make flashy-er
+export const THREE_TWO_ONE_ZERO_COLORS = {
+  "--color-primary": "hsla(0, 0%, 100%, 1)",
+  "--color-secondary": "hsla(210, 3%, 76%, 1)",
+  "--color-header-bg": "hsla(240, 4%, 77%, 1)",
+  "--color-accent": "hsla(237, 84%, 63%, 1)",
+} as CSSProperties
+
+// TODO(dse): make boring-er
+export const REGULAR_COLORS = {
+  "--color-primary": "hsla(0, 0%, 100%, 1)",
+  "--color-secondary": "hsla(210, 3%, 76%, 1)",
+  "--color-header-bg": "hsla(240, 4%, 77%, 1)",
+  "--color-accent": "hsla(237, 84%, 63%, 1)",
+} as CSSProperties

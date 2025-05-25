@@ -1,43 +1,42 @@
+"use client"
 import styled from "styled-components"
-import { PointSystem, Scope, scopes } from "../types"
+import { PointSystem, Scope, scopes } from "../shared"
+import { usePointSystem } from "./ThemeHTMLWrapper"
 
 export default function Nav({
-  selectedPointSystem,
-  setSelectedPointSystem,
+  pointSystem,
   selectedScope,
-  setSelectedScope,
+  setScope,
 }: {
-  selectedPointSystem: PointSystem
-  setSelectedPointSystem: (pointSystem: PointSystem) => void
+  pointSystem: PointSystem
   selectedScope: Scope
-  setSelectedScope: (scope: Scope) => void
+  setScope: (scope: Scope) => void
 }) {
+  const { setPointSystem } = usePointSystem()
   return (
     <Wrapper>
       <SystemNav>
         <RadioButtonWrapper>
           <input
             type="radio"
-            id={PointSystem.THREE_TWO_ONE_ZERO}
+            id={PointSystem.REGULAR}
             name="system"
-            value={PointSystem.THREE_TWO_ONE_ZERO}
-            checked={selectedPointSystem === PointSystem.THREE_TWO_ONE_ZERO}
-            onChange={() =>
-              setSelectedPointSystem(PointSystem.THREE_TWO_ONE_ZERO)
-            }
+            value={PointSystem.REGULAR}
+            onChange={() => setPointSystem(PointSystem.REGULAR)}
+            checked={pointSystem === PointSystem.REGULAR}
           />
-          <label htmlFor={PointSystem.THREE_TWO_ONE_ZERO}>3-2-1-0</label>
+          <label htmlFor={PointSystem.REGULAR}>Regular</label>
         </RadioButtonWrapper>
         <RadioButtonWrapper>
           <input
             type="radio"
-            id={PointSystem.REGULAR}
+            id={PointSystem.THREE_TWO_ONE_ZERO}
             name="system"
-            value={PointSystem.REGULAR}
-            onChange={() => setSelectedPointSystem(PointSystem.REGULAR)}
-            checked={selectedPointSystem === PointSystem.REGULAR}
+            value={PointSystem.THREE_TWO_ONE_ZERO}
+            checked={pointSystem === PointSystem.THREE_TWO_ONE_ZERO}
+            onChange={() => setPointSystem(PointSystem.THREE_TWO_ONE_ZERO)}
           />
-          <label htmlFor={PointSystem.REGULAR}>Regular</label>
+          <label htmlFor={PointSystem.THREE_TWO_ONE_ZERO}>3-2-1-0</label>
         </RadioButtonWrapper>
       </SystemNav>
       <ScopeNav>
@@ -45,7 +44,7 @@ export default function Nav({
           <ScopeButton
             $isSelected={selectedScope === scope}
             key={scope}
-            onClick={() => setSelectedScope(scope)}
+            onClick={() => setScope(scope)}
           >
             {scope}
           </ScopeButton>
@@ -55,10 +54,10 @@ export default function Nav({
   )
 }
 
-const Wrapper = styled.nav`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 12px 8px 0px 8px;
+  padding: 0px 8px 0px 8px;
   width: 100%;
   position: fixed;
   top: 0;
@@ -72,6 +71,7 @@ const SystemNav = styled.nav`
   display: flex;
   width: 100%;
   justify-content: space-around;
+  height: 100%;
 `
 const RadioButtonWrapper = styled.div`
   display: flex;
@@ -79,6 +79,17 @@ const RadioButtonWrapper = styled.div`
   gap: 8px;
   @media (prefers-color-scheme: dark) {
     color: white;
+  }
+
+  input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+
+  input[type="radio"]:checked + label {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
   }
 `
 const ScopeNav = styled.nav`

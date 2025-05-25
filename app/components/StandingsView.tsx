@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { divisions, Scope, Standing, StandingWithChange } from "../types"
+import { divisions, Scope, Standing, StandingWithChange } from "../shared"
 import { Team } from "./Team"
 
 export function StandingsView({

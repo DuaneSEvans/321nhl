@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { StandingWithChange } from "../types"
+import { StandingWithChange } from "../shared"
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid"
 
 export function Team({

@@ -1,16 +1,15 @@
 "use client"
 import { useQuery } from "@tanstack/react-query"
-import { PointSystem, Scope, Standing } from "../types"
+import { PointSystem, Scope, Standing } from "../shared"
 import styled from "styled-components"
 import { useState } from "react"
 import Nav from "./Nav"
 import { StandingsView } from "./StandingsView"
+import { usePointSystem } from "./ThemeHTMLWrapper"
 
 export default function Standings() {
-  const [selectedPointSystem, setSelectedPointSystem] = useState<PointSystem>(
-    PointSystem.THREE_TWO_ONE_ZERO
-  )
-  const [selectedScope, setSelectedScope] = useState<Scope>("Wild Card")
+  const { pointSystem } = usePointSystem()
+  const [scope, setScope] = useState<Scope>("Wild Card")
 
   const query = useQuery({
     queryKey: ["/api/standings"],
@@ -33,21 +32,20 @@ export default function Standings() {
 
   const officialStandings = query.data.officialStandings
   const standings =
-    selectedPointSystem === PointSystem.REGULAR
+    pointSystem === PointSystem.REGULAR
       ? officialStandings
       : calculate321Standings(officialStandings)
 
   return (
     <Layout>
       <Nav
-        setSelectedPointSystem={setSelectedPointSystem}
-        selectedPointSystem={selectedPointSystem}
-        selectedScope={selectedScope}
-        setSelectedScope={setSelectedScope}
+        pointSystem={pointSystem}
+        selectedScope={scope}
+        setScope={setScope}
       />
       <ContentContainer>
         <StandingsView
-          scope={selectedScope}
+          scope={scope}
           standings={standings}
           officialStandings={officialStandings}
         />
@@ -102,7 +100,7 @@ const byNHLStandingsRules = (a: Standing, b: Standing) => {
 const Layout = styled.main`
   display: flex;
   flex-direction: column;
-  --nav-height: 72px;
+  --nav-height: 82px;
 `
 
 const ContentContainer = styled.section`

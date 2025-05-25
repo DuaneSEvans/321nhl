@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { RawStandingSchema, Standing } from "../../types"
+import { RawStandingSchema, Standing } from "../../shared"
 
 // This really should be a GET but Vercel insists on caching and using stale
 // data: https://github.com/vercel/vercel/discussions/10117
