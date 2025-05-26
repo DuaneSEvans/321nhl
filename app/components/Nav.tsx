@@ -10,7 +10,7 @@ import {
 } from "../shared"
 import { usePointSystem } from "./PointSystemProvider"
 
-const transition = { type: "spring", stiffness: 500, damping: 40 }
+const systemTransition = { type: "spring", stiffness: 500, damping: 40 }
 
 export default function Nav({
   selectedScope,
@@ -30,7 +30,6 @@ export default function Nav({
       <SystemNavWrapper>
         <SystemNav>
           <AnimatedBackground
-            layout
             initial={false}
             animate={{
               x: pointSystem === PointSystem.REGULAR ? "0%" : "100%",
@@ -44,7 +43,7 @@ export default function Nav({
                 pointSystem === PointSystem.THREE_TWO_ONE_ZERO ? "8px" : "0px",
               backgroundColor: targetAccentColor,
             }}
-            transition={transition}
+            transition={systemTransition}
           />
           <RadioButtonWrapper>
             <input
@@ -72,27 +71,82 @@ export default function Nav({
           </RadioButtonWrapper>
         </SystemNav>
       </SystemNavWrapper>
-      <ScopeNav>
-        {scopes.map((scope) => (
-          <ScopeButton
-            layout
-            initial={false}
-            animate={{
-              borderColor:
-                selectedScope === scope ? targetAccentColor : "black",
-            }}
-            transition={transition}
-            $isSelected={selectedScope === scope}
-            key={scope}
-            onClick={() => setScope(scope)}
-          >
-            {scope}
-          </ScopeButton>
-        ))}
-      </ScopeNav>
+      <ScopeNavWrapper>
+        <ScopeNav
+          selectedScope={selectedScope}
+          setScope={setScope}
+          targetAccentColor={targetAccentColor}
+        />
+      </ScopeNavWrapper>
     </Wrapper>
   )
 }
+
+const scopeTransition = { type: "spring", stiffness: 200, damping: 16 }
+
+function ScopeNav({
+  selectedScope,
+  setScope,
+  targetAccentColor,
+}: {
+  selectedScope: Scope
+  setScope: (scope: Scope) => void
+  targetAccentColor: string
+}) {
+  return (
+    <>
+      {scopes.map((scope) => (
+        <ScopeNavItem key={scope}>
+          <AnimatedScopeButton
+            onClick={() => setScope(scope)}
+            initial={false}
+            animate={{
+              fontWeight: selectedScope === scope ? "bold" : "normal",
+              color:
+                selectedScope === scope
+                  ? "var(--color-primary)"
+                  : "var(--color-secondary)",
+            }}
+            transition={scopeTransition}
+          >
+            {scope}
+          </AnimatedScopeButton>
+          {selectedScope === scope ? (
+            <AnimatedBorder
+              layoutId={`scope-button`}
+              initial={false}
+              animate={{
+                borderColor: targetAccentColor,
+                fontWeight: "bold",
+              }}
+              transition={scopeTransition}
+            />
+          ) : (
+            <Border />
+          )}
+        </ScopeNavItem>
+      ))}
+    </>
+  )
+}
+
+const BorderStyle = `
+  border-bottom: 4px solid;
+`
+
+const AnimatedBorder = styled(motion.div)`
+  ${BorderStyle}
+`
+
+const Border = styled.div`
+  ${BorderStyle}
+`
+
+const ScopeNavItem = styled.li`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`
 
 const AnimatedBackground = styled(motion.div)`
   position: absolute;
@@ -108,6 +162,7 @@ const SystemNavWrapper = styled.div`
   justify-content: center;
   width: 100%;
   height: 100%;
+  flex: 1;
 `
 const SystemLabel = styled.label`
   width: 100%;
@@ -162,21 +217,16 @@ const RadioButtonWrapper = styled.div`
     font-weight: bold;
   }
 `
-const ScopeNav = styled.nav`
+const ScopeNavWrapper = styled.ul`
   display: flex;
   width: 100%;
+  flex: 1;
 `
 
-const ScopeButton = styled(motion.button)<{ $isSelected: boolean }>`
+const AnimatedScopeButton = styled(motion.button)`
   background-color: transparent;
   flex: 1;
   border: none;
-  color: ${({ $isSelected }) =>
-    $isSelected ? "var(--color-primary)" : "var(--color-secondary)"};
-  font-weight: ${({ $isSelected }) => ($isSelected ? "bold" : "normal")};
-  border-bottom: 4px solid;
-  /* border-color: ${({ $isSelected }) =>
-    $isSelected ? "var(--color-accent)" : "black"}; */
   padding: 8px 0px;
   cursor: pointer;
 `
