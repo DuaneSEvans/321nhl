@@ -102,4 +102,5 @@ const ContentContainer = styled.section`
   display: flex;
   flex-direction: column;
   margin-top: var(--nav-height);
+  align-items: center;
 `

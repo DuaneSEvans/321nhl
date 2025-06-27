@@ -4,6 +4,7 @@ import {
   PointSystem,
   THREE_TWO_ONE_ZERO_COLORS,
   REGULAR_COLORS,
+  CSS_VARS,
 } from "../shared"
 import { usePointSystem } from "./PointSystemProvider"
 import { CSSProperties } from "react"
@@ -21,11 +22,16 @@ export function ThemeHTMLWrapper({ children }: { children: React.ReactNode }) {
       ? THREE_TWO_ONE_ZERO_COLORS
       : REGULAR_COLORS
 
+  const cssVars = {
+    ...themeColors,
+    ...CSS_VARS,
+  }
+
   return (
     <html
       lang="en"
       className={montserrat.variable}
-      style={themeColors as CSSProperties}
+      style={cssVars as CSSProperties}
       data-color-theme={pointSystem}
     >
       {children}

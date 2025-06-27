@@ -78,3 +78,7 @@ export const REGULAR_COLORS = {
   "--color-accent": "hsla(0, 0%, 100%, 1)",
   "--color-nav-bg": "hsla(0, 0%, 0%, 1)",
 }
+
+export const CSS_VARS = {
+  "--max-content-width": "1280px",
+}

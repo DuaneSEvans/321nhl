@@ -285,7 +285,9 @@ const Header = styled.h1`
   font-size: 1.5rem;
   font-weight: bold;
   background-color: var(--color-header-bg);
-  padding: 8px;
+  padding: 8px calc(50vw - 50% + 8px);
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
 `
 
 const SubHeader = styled.h2`
@@ -316,6 +318,8 @@ const TeamWrapper = styled.div`
 const ViewWrapper = styled.section`
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: var(--max-content-width);
 `
 
 const Divider = styled.div`

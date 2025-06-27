@@ -27,57 +27,63 @@ export default function Nav({
 
   return (
     <Wrapper>
-      <SystemNavWrapper>
-        <SystemNav>
-          <AnimatedBackground
-            initial={false}
-            animate={{
-              x: pointSystem === PointSystem.REGULAR ? "0%" : "100%",
-              borderTopLeftRadius:
-                pointSystem === PointSystem.REGULAR ? "8px" : "0px",
-              borderBottomLeftRadius:
-                pointSystem === PointSystem.REGULAR ? "8px" : "0px",
-              borderTopRightRadius:
-                pointSystem === PointSystem.THREE_TWO_ONE_ZERO ? "8px" : "0px",
-              borderBottomRightRadius:
-                pointSystem === PointSystem.THREE_TWO_ONE_ZERO ? "8px" : "0px",
-              backgroundColor: targetAccentColor,
-            }}
-            transition={systemTransition}
+      <ControlWrapper>
+        <SystemNavWrapper>
+          <SystemNav>
+            <AnimatedBackground
+              initial={false}
+              animate={{
+                x: pointSystem === PointSystem.REGULAR ? "0%" : "100%",
+                borderTopLeftRadius:
+                  pointSystem === PointSystem.REGULAR ? "8px" : "0px",
+                borderBottomLeftRadius:
+                  pointSystem === PointSystem.REGULAR ? "8px" : "0px",
+                borderTopRightRadius:
+                  pointSystem === PointSystem.THREE_TWO_ONE_ZERO
+                    ? "8px"
+                    : "0px",
+                borderBottomRightRadius:
+                  pointSystem === PointSystem.THREE_TWO_ONE_ZERO
+                    ? "8px"
+                    : "0px",
+                backgroundColor: targetAccentColor,
+              }}
+              transition={systemTransition}
+            />
+            <RadioButtonWrapper>
+              <input
+                type="radio"
+                id={PointSystem.REGULAR}
+                name="system"
+                value={PointSystem.REGULAR}
+                onChange={() => setPointSystem(PointSystem.REGULAR)}
+                checked={pointSystem === PointSystem.REGULAR}
+              />
+              <SystemLabel htmlFor={PointSystem.REGULAR}>Regular</SystemLabel>
+            </RadioButtonWrapper>
+            <RadioButtonWrapper>
+              <input
+                type="radio"
+                id={PointSystem.THREE_TWO_ONE_ZERO}
+                name="system"
+                value={PointSystem.THREE_TWO_ONE_ZERO}
+                checked={pointSystem === PointSystem.THREE_TWO_ONE_ZERO}
+                onChange={() => setPointSystem(PointSystem.THREE_TWO_ONE_ZERO)}
+              />
+              <SystemLabel htmlFor={PointSystem.THREE_TWO_ONE_ZERO}>
+                3-2-1-0
+              </SystemLabel>
+            </RadioButtonWrapper>
+          </SystemNav>
+        </SystemNavWrapper>
+        <ScopeNavWrapper>
+          <ScopeNav
+            selectedScope={selectedScope}
+            setScope={setScope}
+            targetAccentColor={targetAccentColor}
           />
-          <RadioButtonWrapper>
-            <input
-              type="radio"
-              id={PointSystem.REGULAR}
-              name="system"
-              value={PointSystem.REGULAR}
-              onChange={() => setPointSystem(PointSystem.REGULAR)}
-              checked={pointSystem === PointSystem.REGULAR}
-            />
-            <SystemLabel htmlFor={PointSystem.REGULAR}>Regular</SystemLabel>
-          </RadioButtonWrapper>
-          <RadioButtonWrapper>
-            <input
-              type="radio"
-              id={PointSystem.THREE_TWO_ONE_ZERO}
-              name="system"
-              value={PointSystem.THREE_TWO_ONE_ZERO}
-              checked={pointSystem === PointSystem.THREE_TWO_ONE_ZERO}
-              onChange={() => setPointSystem(PointSystem.THREE_TWO_ONE_ZERO)}
-            />
-            <SystemLabel htmlFor={PointSystem.THREE_TWO_ONE_ZERO}>
-              3-2-1-0
-            </SystemLabel>
-          </RadioButtonWrapper>
-        </SystemNav>
-      </SystemNavWrapper>
-      <ScopeNavWrapper>
-        <ScopeNav
-          selectedScope={selectedScope}
-          setScope={setScope}
-          targetAccentColor={targetAccentColor}
-        />
-      </ScopeNavWrapper>
+        </ScopeNavWrapper>
+      </ControlWrapper>
     </Wrapper>
   )
 }
@@ -178,15 +184,22 @@ const SystemLabel = styled.label`
 
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   padding: 8px 8px 0px 8px;
-  gap: 8px;
   width: 100%;
   position: fixed;
   top: 0;
   left: 0;
   background-color: var(--color-nav-bg);
   height: var(--nav-height);
+`
+
+const ControlWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: var(--max-content-width);
 `
 
 const SystemNav = styled.nav`
