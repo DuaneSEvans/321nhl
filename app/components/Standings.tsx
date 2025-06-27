@@ -1,11 +1,12 @@
 "use client"
 import { useQuery } from "@tanstack/react-query"
 import { PointSystem, Scope, Standing } from "../shared"
-import styled from "styled-components"
+import styled, { keyframes } from "styled-components"
 import { useState } from "react"
 import Nav from "./Nav"
 import { StandingsView } from "./StandingsView"
 import { usePointSystem } from "./PointSystemProvider"
+import Image from "next/image"
 
 export default function Standings() {
   const { pointSystem } = usePointSystem()
@@ -27,7 +28,7 @@ export default function Standings() {
   })
 
   if (query.isPending || !query.data) {
-    return <div>Loading...</div>
+    return <LoadingView />
   }
 
   const officialStandings = query.data.officialStandings
@@ -104,3 +105,31 @@ const ContentContainer = styled.section`
   margin-top: var(--nav-height);
   align-items: center;
 `
+
+const spin = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`
+
+const Spinner = styled.div`
+  animation: ${spin} 1s linear infinite;
+`
+
+const LoadingViewContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+`
+
+const LoadingView = () => (
+  <LoadingViewContainer>
+    <Spinner>
+      <Image src="/hockey-stick.png" alt="Loading" width={200} height={200} />
+    </Spinner>
+  </LoadingViewContainer>
+)
