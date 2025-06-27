@@ -7,13 +7,24 @@ import {
   CSS_VARS,
 } from "../shared"
 import { usePointSystem } from "./PointSystemProvider"
-import { CSSProperties } from "react"
+import { createGlobalStyle } from "styled-components"
 
 const montserrat = Montserrat({
   subsets: ["latin"],
   weight: ["400", "700"],
   variable: "--font-montserrat",
 })
+
+const GlobalStyle = createGlobalStyle<{
+  cssVars: { [key: string]: string | number }
+}>`
+  body {
+    ${({ cssVars }) =>
+      Object.entries(cssVars)
+        .map(([key, value]) => `${key}: ${value};`)
+        .join("\n    ")}
+  }
+`
 
 export function ThemeHTMLWrapper({ children }: { children: React.ReactNode }) {
   const { pointSystem } = usePointSystem()
@@ -28,13 +39,9 @@ export function ThemeHTMLWrapper({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <html
-      lang="en"
-      className={montserrat.variable}
-      style={cssVars as CSSProperties}
-      data-color-theme={pointSystem}
-    >
-      {children}
-    </html>
+    <>
+      <GlobalStyle cssVars={cssVars} />
+      <div className={montserrat.variable}>{children}</div>
+    </>
   )
 }

@@ -4,6 +4,7 @@ import type { Metadata } from "next"
 import "./globals.css"
 import { ThemeHTMLWrapper } from "./components/ThemeHTMLWrapper"
 import { PointSystemProvider } from "./components/PointSystemProvider"
+import StyledComponentsRegistry from "./components/StyledComponentsRegistery"
 
 const isLocal = process.env.NODE_ENV === "development"
 const title = "3-2-1 NHL Standings"
@@ -23,12 +24,16 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <PointSystemProvider>
-      <ThemeHTMLWrapper>
-        <body>
-          <QueryProvider>{children}</QueryProvider>
-        </body>
-      </ThemeHTMLWrapper>
-    </PointSystemProvider>
+    <html lang="en">
+      <body>
+        <StyledComponentsRegistry>
+          <PointSystemProvider>
+            <ThemeHTMLWrapper>
+              <QueryProvider>{children}</QueryProvider>
+            </ThemeHTMLWrapper>
+          </PointSystemProvider>
+        </StyledComponentsRegistry>
+      </body>
+    </html>
   )
 }
