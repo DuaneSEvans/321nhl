@@ -5,10 +5,17 @@ import "./globals.css"
 import { ThemeHTMLWrapper } from "./components/ThemeHTMLWrapper"
 import { PointSystemProvider } from "./components/PointSystemProvider"
 import StyledComponentsRegistry from "./components/StyledComponentsRegistery"
+import { Montserrat } from "next/font/google"
 
 const isLocal = process.env.NODE_ENV === "development"
 const title = "3-2-1 NHL Standings"
 const devTitle = `< ${title} />`
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-montserrat",
+})
 
 export const metadata: Metadata = {
   title: isLocal ? devTitle : title,
@@ -24,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={montserrat.variable}>
       <body>
         <StyledComponentsRegistry>
           <PointSystemProvider>

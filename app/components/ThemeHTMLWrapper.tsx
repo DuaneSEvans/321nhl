@@ -1,5 +1,4 @@
 "use client"
-import { Montserrat } from "next/font/google"
 import {
   PointSystem,
   THREE_TWO_ONE_ZERO_COLORS,
@@ -8,12 +7,6 @@ import {
 } from "../shared"
 import { usePointSystem } from "./PointSystemProvider"
 import { createGlobalStyle } from "styled-components"
-
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-montserrat",
-})
 
 const GlobalStyle = createGlobalStyle<{
   cssVars: { [key: string]: string | number }
@@ -41,7 +34,7 @@ export function ThemeHTMLWrapper({ children }: { children: React.ReactNode }) {
   return (
     <>
       <GlobalStyle cssVars={cssVars} />
-      <div className={montserrat.variable}>{children}</div>
+      {children}
     </>
   )
 }
