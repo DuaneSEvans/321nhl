@@ -1,6 +1,8 @@
 import styled from "styled-components"
 import { StandingWithChange } from "../shared"
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid"
+import { TeamWrapper } from "./StandingsView"
+import Image from "next/image"
 
 export function Team({
   standing,
@@ -9,28 +11,132 @@ export function Team({
   standing: StandingWithChange
   rank: number
 }) {
+  const {
+    change,
+    teamLogo,
+    teamCommonName,
+    teamAbbrev,
+    regulationWins,
+    nonRegulationWins,
+    nonRegulationLosses,
+    regulationLosses,
+    points,
+  } = standing
+
+  const gamesPlayed =
+    regulationWins + nonRegulationWins + nonRegulationLosses + regulationLosses
+
+  const mobileRecord = `${regulationWins} - ${nonRegulationWins} - ${nonRegulationLosses} - ${regulationLosses}`
+
   return (
     <>
-      <PositionWrapper>{rank}</PositionWrapper>
-      <ChangeArrow change={standing.change} />
+      <Stat>{rank}</Stat>
+      <ChangeArrow change={change} />
 
-      <TeamContentWrapper>
-        <TeamHeader>
-          {standing.teamCommonName.default}
-          <MiniPoints>
-            ({standing.regulationWins} - {standing.nonRegulationWins} -{" "}
-            {standing.nonRegulationLosses} - {standing.regulationLosses})
-          </MiniPoints>
-        </TeamHeader>
-        <div>Points: {standing.points}</div>
-      </TeamContentWrapper>
+      <TeamHeader>
+        <TeamLogo src={teamLogo} />
+        <TeamName>{teamCommonName.default}</TeamName>
+        <TeamAbbreviation>{teamAbbrev.default}</TeamAbbreviation>
+      </TeamHeader>
+
+      <DesktopView>
+        <Stat>{gamesPlayed}</Stat>
+        <Stat>{regulationWins}</Stat>
+        <Stat>{nonRegulationWins}</Stat>
+        <Stat>{nonRegulationLosses}</Stat>
+        <Stat>{regulationLosses}</Stat>
+        <Stat>{points}</Stat>
+      </DesktopView>
+      <MobileView>
+        <Stat>{mobileRecord}</Stat>
+        <Stat>{points}</Stat>
+      </MobileView>
     </>
   )
 }
 
+export function TableHeader(): JSX.Element {
+  return (
+    <TeamWrapper>
+      <StatHeader>Rank</StatHeader>
+      <ChangeArrow change={0} />
+      <TeamHeader>Team</TeamHeader>
+      <DesktopView>
+        <StatHeader>GP</StatHeader>
+        <StatHeader>W</StatHeader>
+        <StatHeader>OTW</StatHeader>
+        <StatHeader>OTL</StatHeader>
+        <StatHeader>L</StatHeader>
+        <StatHeader>Pts</StatHeader>
+      </DesktopView>
+      <MobileView>
+        <StatHeader>W-OTW-OTL-L</StatHeader>
+        <StatHeader>Pts</StatHeader>
+      </MobileView>
+    </TeamWrapper>
+  )
+}
+
+const DesktopView = styled.div`
+  display: contents;
+
+  @media (max-width: 475px) {
+    display: none;
+  }
+`
+
+const MobileView = styled.div`
+  display: contents;
+
+  @media (min-width: 476px) {
+    display: none;
+  }
+`
+
+const TeamName = styled.span`
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: 640px) {
+    display: none;
+  }
+`
+
+const TeamAbbreviation = styled.span`
+  font-weight: bold;
+
+  @media (min-width: 641px) {
+    display: none;
+  }
+`
+
+function TeamLogo({ src }: { src: string }): JSX.Element {
+  return (
+    <ImageWrapper>
+      <Image src={src} alt="Team Logo" fill />
+    </ImageWrapper>
+  )
+}
+
+const StatHeader = styled.span`
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+`
+
+const ImageWrapper = styled.div`
+  width: 36px;
+  height: 24px;
+  position: relative;
+  margin-right: 0.5rem;
+  min-width: 36px;
+`
+
 function ChangeArrow({ change }: { change: number }): JSX.Element {
   return change === 0 ? (
-    <span>-</span>
+    <span></span>
   ) : change > 0 ? (
     <span style={{ color: "green" }}>
       <ArrowUpIcon />
@@ -44,18 +150,12 @@ function ChangeArrow({ change }: { change: number }): JSX.Element {
   )
 }
 
-const PositionWrapper = styled.span`
-  width: 2rem;
-  font-size: 2rem;
+const Stat = styled.span`
   text-align: center;
+  white-space: nowrap;
 `
 
-const TeamContentWrapper = styled.div``
-
-const MiniPoints = styled.span`
-  font-size: 0.8rem;
-  font-weight: lighter;
-  margin-left: 0.75rem;
+const TeamHeader = styled.h1`
+  display: flex;
+  align-items: center;
 `
-
-const TeamHeader = styled.h1``

@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import { divisions, Scope, Standing, StandingWithChange } from "../shared"
-import { Team } from "./Team"
+import { TableHeader, Team } from "./Team"
+import React from "react"
 
 export function StandingsView({
   scope,
@@ -23,6 +24,7 @@ export function StandingsView({
         <ViewWrapper>
           <Header>League</Header>
           <TeamsWrapper>
+            <TableHeader />
             {standingsWithChange.map((standing, i) => (
               <TeamWrapper key={standing.teamCommonName.default}>
                 <Team standing={standing} rank={i + 1} />
@@ -48,6 +50,7 @@ export function StandingsView({
             <ConferenceWrapper key={name}>
               <Header>{name}</Header>
               <TeamsWrapper>
+                <TableHeader />
                 {standings.map((standing, i) => (
                   <TeamWrapper key={standing.teamCommonName.default}>
                     <Team standing={standing} rank={i + 1} />
@@ -147,13 +150,14 @@ export function StandingsView({
                 ))}
                 <SubHeader>Wild Card</SubHeader>
                 <TeamsWrapper>
+                  <TableHeader />
                   {wildCard.map((standing, i) => (
-                    <div key={standing.teamCommonName.default}>
+                    <React.Fragment key={standing.teamCommonName.default}>
                       <TeamWrapper>
                         <Team standing={standing} rank={i + 1} />
                       </TeamWrapper>
                       {i === 1 && <Divider />}
-                    </div>
+                    </React.Fragment>
                   ))}
                 </TeamsWrapper>
               </ConferenceWrapper>
@@ -271,6 +275,7 @@ function Division({
     <>
       <SubHeader>{name}</SubHeader>
       <TeamsWrapper>
+        <TableHeader />
         {standings.map((standing, i) => (
           <TeamWrapper key={standing.teamCommonName.default}>
             <Team standing={standing} rank={i + 1} />
@@ -301,18 +306,40 @@ const ConferenceWrapper = styled.div`
   flex-direction: column;
 `
 
+export const TeamWrapper = styled.div`
+  display: grid;
+  /* rank, change, name, GP, W, OTW, OTL, L, Pts */
+  grid-template-columns: 1fr 1rem minmax(72px, 3fr) repeat(6, 1fr);
+
+  @media (max-width: 640px) {
+    /* rank, change, name, record, pts */
+    grid-template-columns: 1rem 1rem 2fr 2fr 1fr;
+  }
+
+  align-items: center;
+  gap: 1rem;
+  padding: 8px 0 8px 0;
+`
+
+const Divider = styled.div`
+  height: 4px;
+  background-color: black;
+  margin: 8px 0 8px 0;
+`
+
 const TeamsWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
   flex: 1;
   padding: 8px;
-`
 
-const TeamWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+  & > ${TeamWrapper}:not(:last-of-type) {
+    border-bottom: 1px solid var(--color-secondary);
+  }
+
+  & > ${TeamWrapper}:has(+ ${Divider}) {
+    border-bottom: none;
+  }
 `
 
 const ViewWrapper = styled.section`
@@ -320,10 +347,4 @@ const ViewWrapper = styled.section`
   flex-direction: column;
   width: 100%;
   max-width: var(--max-content-width);
-`
-
-const Divider = styled.div`
-  height: 1px;
-  background-color: var(--color-secondary);
-  margin-top: 16px;
 `

@@ -192,6 +192,7 @@ const Wrapper = styled.div`
   left: 0;
   background-color: var(--color-nav-bg);
   height: var(--nav-height);
+  z-index: 10; // for the relative positioned logo elements
 `
 
 const ControlWrapper = styled.div`
