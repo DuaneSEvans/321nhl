@@ -324,7 +324,7 @@ export const TeamWrapper = styled.div`
 const Divider = styled.div`
   height: 4px;
   background-color: black;
-  margin: 8px 0 8px 0;
+  margin: 4px 0 4px 0;
 `
 
 const TeamsWrapper = styled.div`
