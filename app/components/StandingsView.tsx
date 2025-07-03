@@ -370,7 +370,7 @@ export const AnimatedTeamWrapper = styled(motion.div)`
 
   @media (max-width: 475px) {
     /* rank, change, name, record, pts */
-    grid-template-columns: 1rem 1rem 2fr 2fr 1fr;
+    grid-template-columns: 1fr 1rem 2fr 2fr 1fr;
   }
 
   align-items: center;
