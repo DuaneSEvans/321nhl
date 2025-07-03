@@ -1,22 +1,39 @@
 import styled from "styled-components"
-import { divisions, Scope, Standing, StandingWithChange } from "../shared"
+import {
+  divisions,
+  PointSystem,
+  Scope,
+  Standing,
+  StandingWithChange,
+} from "../shared"
 import { TableHeader, Team } from "./Team"
-import React from "react"
+import React, { useEffect, useRef } from "react"
+import { motion } from "framer-motion"
+
+function usePrevious<T>(value: T) {
+  const ref = useRef<T>()
+  useEffect(() => {
+    ref.current = value
+  }, [value])
+  return ref.current
+}
 
 export function StandingsView({
   scope,
-  standings,
+  standingsWithSystem,
   officialStandings,
 }: {
   scope: Scope
-  standings: Standing[]
+  standingsWithSystem: { standings: Standing[]; system: PointSystem }
   officialStandings: Standing[]
 }): JSX.Element {
   const standingsWithChange = calculateStandingsWithChange(
     scope,
-    standings,
+    standingsWithSystem.standings,
     officialStandings
   )
+  const prevSystem = usePrevious(standingsWithSystem.system)
+  const shouldAnimate = prevSystem !== standingsWithSystem.system
 
   switch (scope) {
     case "League":
@@ -26,9 +43,12 @@ export function StandingsView({
           <TeamsWrapper>
             <TableHeader />
             {standingsWithChange.map((standing, i) => (
-              <TeamWrapper key={standing.teamCommonName.default}>
-                <Team standing={standing} rank={i + 1} />
-              </TeamWrapper>
+              <AnimatedTeam
+                standing={standing}
+                rank={i + 1}
+                key={standing.teamCommonName.default}
+                shouldAnimate={shouldAnimate}
+              />
             ))}
           </TeamsWrapper>
         </ViewWrapper>
@@ -52,9 +72,12 @@ export function StandingsView({
               <TeamsWrapper>
                 <TableHeader />
                 {standings.map((standing, i) => (
-                  <TeamWrapper key={standing.teamCommonName.default}>
-                    <Team standing={standing} rank={i + 1} />
-                  </TeamWrapper>
+                  <AnimatedTeam
+                    standing={standing}
+                    rank={i + 1}
+                    key={standing.teamCommonName.default}
+                    shouldAnimate={shouldAnimate}
+                  />
                 ))}
               </TeamsWrapper>
             </ConferenceWrapper>
@@ -94,6 +117,7 @@ export function StandingsView({
                     name={divisionName}
                     standings={division}
                     key={divisionName}
+                    shouldAnimate={shouldAnimate}
                   />
                 ))}
               </ConferenceWrapper>
@@ -146,6 +170,7 @@ export function StandingsView({
                     name={divisionName}
                     standings={division}
                     key={divisionName}
+                    shouldAnimate={shouldAnimate}
                   />
                 ))}
                 <SubHeader>Wild Card</SubHeader>
@@ -153,9 +178,11 @@ export function StandingsView({
                   <TableHeader />
                   {wildCard.map((standing, i) => (
                     <React.Fragment key={standing.teamCommonName.default}>
-                      <TeamWrapper>
-                        <Team standing={standing} rank={i + 1} />
-                      </TeamWrapper>
+                      <AnimatedTeam
+                        standing={standing}
+                        rank={i + 1}
+                        shouldAnimate={shouldAnimate}
+                      />
                       {i === 1 && <Divider />}
                     </React.Fragment>
                   ))}
@@ -167,6 +194,30 @@ export function StandingsView({
       )
     }
   }
+}
+
+function AnimatedTeam({
+  standing,
+  rank,
+  shouldAnimate,
+}: {
+  standing: StandingWithChange
+  rank: number
+  shouldAnimate: boolean
+}): JSX.Element {
+  return (
+    <AnimatedTeamWrapper
+      layoutId={standing.teamCommonName.default}
+      layout="position"
+      transition={
+        shouldAnimate
+          ? { type: "spring", stiffness: 200, damping: 30 }
+          : { duration: 0 }
+      }
+    >
+      <Team standing={standing} rank={rank} />
+    </AnimatedTeamWrapper>
+  )
 }
 
 // TODO(dse): dry up
@@ -267,9 +318,11 @@ function calculateStandingsWithChange(
 function Division({
   name,
   standings,
+  shouldAnimate,
 }: {
   name: string
   standings: StandingWithChange[]
+  shouldAnimate: boolean
 }): JSX.Element {
   return (
     <>
@@ -277,9 +330,12 @@ function Division({
       <TeamsWrapper>
         <TableHeader />
         {standings.map((standing, i) => (
-          <TeamWrapper key={standing.teamCommonName.default}>
-            <Team standing={standing} rank={i + 1} />
-          </TeamWrapper>
+          <AnimatedTeam
+            standing={standing}
+            rank={i + 1}
+            key={standing.teamCommonName.default}
+            shouldAnimate={shouldAnimate}
+          />
         ))}
       </TeamsWrapper>
     </>
@@ -306,7 +362,7 @@ const ConferenceWrapper = styled.div`
   flex-direction: column;
 `
 
-export const TeamWrapper = styled.div`
+export const AnimatedTeamWrapper = styled(motion.div)`
   display: grid;
   /* rank, change, name, GP, W, OTW, OTL, L, Pts */
   grid-template-columns: 1fr 1rem minmax(72px, 3fr) repeat(6, 1fr);
@@ -333,11 +389,11 @@ const TeamsWrapper = styled.div`
   flex: 1;
   padding: 8px;
 
-  & > ${TeamWrapper}:not(:last-of-type) {
+  & > ${AnimatedTeamWrapper}:not(:last-of-type) {
     border-bottom: 1px solid var(--color-secondary);
   }
 
-  & > ${TeamWrapper}:has(+ ${Divider}) {
+  & > ${AnimatedTeamWrapper}:has(+ ${Divider}) {
     border-bottom: none;
   }
 `

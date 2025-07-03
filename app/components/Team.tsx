@@ -1,7 +1,7 @@
 import styled from "styled-components"
 import { StandingWithChange } from "../shared"
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid"
-import { TeamWrapper } from "./StandingsView"
+import { AnimatedTeamWrapper } from "./StandingsView"
 import Image from "next/image"
 
 export function Team({
@@ -57,7 +57,7 @@ export function Team({
 
 export function TableHeader(): JSX.Element {
   return (
-    <TeamWrapper>
+    <AnimatedTeamWrapper>
       <StatHeader>Rank</StatHeader>
       <ChangeArrow change={0} />
       <TeamHeader>Team</TeamHeader>
@@ -73,7 +73,7 @@ export function TableHeader(): JSX.Element {
         <StatHeader>W-OTW-OTL-L</StatHeader>
         <StatHeader>Pts</StatHeader>
       </MobileView>
-    </TeamWrapper>
+    </AnimatedTeamWrapper>
   )
 }
 

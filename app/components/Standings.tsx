@@ -14,10 +14,13 @@ export default function Standings({
   const { pointSystem } = usePointSystem()
   const [scope, setScope] = useState<Scope>("Wild Card")
 
-  const standings =
+  const standingsWithSystem =
     pointSystem === PointSystem.REGULAR
-      ? officialStandings
-      : calculate321Standings(officialStandings)
+      ? { standings: officialStandings, system: PointSystem.REGULAR }
+      : {
+          standings: calculate321Standings(officialStandings),
+          system: PointSystem.THREE_TWO_ONE_ZERO,
+        }
 
   return (
     <Layout>
@@ -25,7 +28,7 @@ export default function Standings({
       <ContentContainer>
         <StandingsView
           scope={scope}
-          standings={standings}
+          standingsWithSystem={standingsWithSystem}
           officialStandings={officialStandings}
         />
       </ContentContainer>
