@@ -1,3 +1,4 @@
+"use client"
 import styled from "styled-components"
 import { StandingWithChange } from "../shared"
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid"
