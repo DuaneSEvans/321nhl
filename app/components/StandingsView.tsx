@@ -368,7 +368,7 @@ export const AnimatedTeamWrapper = styled(motion.div)`
   /* rank, change, name, GP, W, OTW, OTL, L, Pts */
   grid-template-columns: 1fr 1rem minmax(72px, 3fr) repeat(6, 1fr);
 
-  @media (max-width: 640px) {
+  @media (max-width: 475px) {
     /* rank, change, name, record, pts */
     grid-template-columns: 1rem 1rem 2fr 2fr 1fr;
   }

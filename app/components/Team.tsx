@@ -95,7 +95,6 @@ const MobileView = styled.div`
 `
 
 const TeamName = styled.span`
-  font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -162,7 +161,8 @@ const Stat = styled.span`
   white-space: nowrap;
 `
 
-const TeamHeader = styled.h1`
+const TeamHeader = styled.span`
   display: flex;
   align-items: center;
+  font-weight: bold;
 `
