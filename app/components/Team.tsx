@@ -138,17 +138,23 @@ function ChangeArrow({ change }: { change: number }): JSX.Element {
   return change === 0 ? (
     <span></span>
   ) : change > 0 ? (
-    <span style={{ color: "green" }}>
+    <ChangeWrapper style={{ color: "green" }}>
       <ArrowUpIcon />
-      {change}
-    </span>
+      {Math.abs(change)}
+    </ChangeWrapper>
   ) : (
-    <span style={{ color: "red" }}>
+    <ChangeWrapper style={{ color: "red" }}>
       <ArrowDownIcon />
-      {change}
-    </span>
+      {Math.abs(change)}
+    </ChangeWrapper>
   )
 }
+
+const ChangeWrapper = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
 
 const Stat = styled.span`
   text-align: center;
