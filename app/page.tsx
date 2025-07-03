@@ -12,7 +12,6 @@ export default async function Home() {
     }
   )
   const data = await res.json()
-  console.log(data.standings[0])
 
   const parsedStandings = z.array(RawStandingSchema).parse(data.standings)
 
