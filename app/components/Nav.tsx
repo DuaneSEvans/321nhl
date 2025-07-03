@@ -121,6 +121,7 @@ function ScopeNav({
             <AnimatedBorder
               layoutId={`scope-button`}
               initial={false}
+              style={{ originY: "0px" }}
               animate={{
                 borderColor: targetAccentColor,
                 fontWeight: "bold",
