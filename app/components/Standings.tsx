@@ -1,10 +1,19 @@
 "use client"
 import { PointSystem, Scope, Standing } from "../shared"
 import styled from "styled-components"
-import { useState } from "react"
+import { useRef, useEffect, useState } from "react"
 import Nav from "./Nav"
 import { StandingsView } from "./StandingsView"
 import { usePointSystem } from "./PointSystemProvider"
+import { AnimatePresence, motion } from "framer-motion"
+
+function usePrevious<T>(value: T) {
+  const ref = useRef<T>()
+  useEffect(() => {
+    ref.current = value
+  }, [value])
+  return ref.current
+}
 
 export default function Standings({
   officialStandings,
@@ -22,15 +31,22 @@ export default function Standings({
           system: PointSystem.THREE_TWO_ONE_ZERO,
         }
 
+  const prevSystem = usePrevious(standingsWithSystem.system)
+  const systemChanged = prevSystem !== standingsWithSystem.system
+
   return (
     <Layout>
       <Nav selectedScope={scope} setScope={setScope} />
       <ContentContainer>
-        <StandingsView
-          scope={scope}
-          standingsWithSystem={standingsWithSystem}
-          officialStandings={officialStandings}
-        />
+        <AnimatePresence mode="wait">
+          <StandingsView
+            key={scope}
+            scope={scope}
+            standingsWithSystem={standingsWithSystem}
+            officialStandings={officialStandings}
+            systemChanged={systemChanged}
+          />
+        </AnimatePresence>
       </ContentContainer>
     </Layout>
   )
@@ -84,9 +100,10 @@ const Layout = styled.main`
   flex-direction: column;
 `
 
-const ContentContainer = styled.section`
+const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: var(--nav-height);
   align-items: center;
+  overflow: hidden; // avoids a scrollbar on initial animation
 `

@@ -154,6 +154,7 @@ const ChangeWrapper = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: bold;
 `
 
 const Stat = styled.span`
