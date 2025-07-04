@@ -65,7 +65,7 @@ export const THREE_TWO_ONE_ZERO_COLORS = {
   "--color-secondary": "hsla(210, 3%, 76%, 1)",
   "--color-header-bg": "hsla(240, 4%, 77%, 1)",
   "--color-accent": "hsla(237, 84%, 63%, 1)",
-  "--color-accent-secondary": "hsla(237, 84%, 63%, 1)", // ? todo
+  "--color-accent-secondary": "hsla(265, 100%, 96%, 0.8)",
   "--color-nav-bg": "hsla(0, 0%, 0%, 1)",
 }
 
@@ -77,7 +77,7 @@ export const REGULAR_COLORS = {
   "--color-secondary": "hsla(210, 3%, 76%, 1)",
   "--color-header-bg": "hsla(240, 4%, 77%, 1)",
   "--color-accent": "hsla(0, 0%, 100%, 1)",
-  "--color-accent-secondary": "hsla(0, 0%, 0%, 1)",
+  "--color-accent-secondary": "hsla(240, 4%, 97%, 1)",
   "--color-nav-bg": "hsla(0, 0%, 0%, 1)",
 }
 

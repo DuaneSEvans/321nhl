@@ -3,9 +3,11 @@ import styled from "styled-components"
 import {
   divisions,
   PointSystem,
+  REGULAR_COLORS,
   Scope,
   Standing,
   StandingWithChange,
+  THREE_TWO_ONE_ZERO_COLORS,
 } from "../shared"
 import { TableHeader, Team } from "./Team"
 import React from "react"
@@ -28,6 +30,11 @@ export function StandingsView({
     officialStandings
   )
 
+  const alternateBgColor =
+    standingsWithSystem.system === PointSystem.REGULAR
+      ? REGULAR_COLORS["--color-accent-secondary"]
+      : THREE_TWO_ONE_ZERO_COLORS["--color-accent-secondary"]
+
   switch (scope) {
     case "League":
       return (
@@ -41,6 +48,8 @@ export function StandingsView({
                 rank={i + 1}
                 key={standing.teamCommonName.default}
                 shouldSlideTeam={systemChanged}
+                alternateBgColor={alternateBgColor}
+                isOdd={i % 2 === 0}
               />
             ))}
           </AnimatedTeams>
@@ -70,6 +79,8 @@ export function StandingsView({
                     rank={i + 1}
                     key={standing.teamCommonName.default}
                     shouldSlideTeam={systemChanged}
+                    isOdd={i % 2 === 0}
+                    alternateBgColor={alternateBgColor}
                   />
                 ))}
               </AnimatedTeams>
@@ -112,6 +123,7 @@ export function StandingsView({
                     key={divisionName}
                     systemChanged={systemChanged}
                     scope={scope}
+                    alternateBgColor={alternateBgColor}
                   />
                 ))}
               </ConferenceWrapper>
@@ -166,6 +178,7 @@ export function StandingsView({
                     key={divisionName}
                     systemChanged={systemChanged}
                     scope={scope}
+                    alternateBgColor={alternateBgColor}
                   />
                 ))}
                 <AnimatedSubHeader>Wild Card</AnimatedSubHeader>
@@ -177,6 +190,8 @@ export function StandingsView({
                         standing={standing}
                         rank={i + 1}
                         shouldSlideTeam={systemChanged}
+                        isOdd={i % 2 === 0}
+                        alternateBgColor={alternateBgColor}
                       />
                       {i === 1 && <Divider />}
                     </React.Fragment>
@@ -203,15 +218,22 @@ function AnimatedTeam({
   standing,
   rank,
   shouldSlideTeam,
+  isOdd,
+  alternateBgColor,
 }: {
   standing: StandingWithChange
   rank: number
   shouldSlideTeam: boolean
+  isOdd: boolean
+  alternateBgColor: string
 }): JSX.Element {
   return (
     <AnimatedTeamWrapper
       layoutId={standing.teamCommonName.default}
       layout="position"
+      animate={{
+        backgroundColor: isOdd ? alternateBgColor : "rgba(255, 255, 255, 0)",
+      }}
       transition={
         shouldSlideTeam
           ? { type: "spring", stiffness: 200, damping: 30 }
@@ -323,11 +345,13 @@ function Division({
   standings,
   systemChanged,
   scope,
+  alternateBgColor,
 }: {
   name: string
   standings: StandingWithChange[]
   systemChanged: boolean
   scope: Scope
+  alternateBgColor: string
 }): JSX.Element {
   return (
     <>
@@ -340,6 +364,8 @@ function Division({
             rank={i + 1}
             key={standing.teamCommonName.default}
             shouldSlideTeam={systemChanged}
+            isOdd={i % 2 === 0}
+            alternateBgColor={alternateBgColor}
           />
         ))}
       </AnimatedTeams>
@@ -427,7 +453,6 @@ export const AnimatedTeamWrapper = styled(motion.div)`
 const Divider = styled.div`
   height: 4px;
   background-color: black;
-  margin: 4px 0 4px 0;
 `
 
 const AnimatedTeamsWrapper = styled(motion.div)`
