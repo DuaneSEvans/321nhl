@@ -5,7 +5,7 @@ import { useRef, useEffect, useState } from "react"
 import Nav from "./Nav"
 import { StandingsView } from "./StandingsView"
 import { usePointSystem } from "./PointSystemProvider"
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence } from "framer-motion"
 
 function usePrevious<T>(value: T) {
   const ref = useRef<T>()
