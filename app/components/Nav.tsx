@@ -10,7 +10,7 @@ import {
 } from "../shared"
 import { usePointSystem } from "./PointSystemProvider"
 
-const systemTransition = { type: "spring", stiffness: 500, damping: 40 }
+export const systemTransition = { type: "spring", stiffness: 500, damping: 40 }
 
 export default function Nav({
   selectedScope,

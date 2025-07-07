@@ -12,6 +12,7 @@ import {
 import { TableHeader, Team } from "./Team"
 import React from "react"
 import { AnimatePresence, motion, MotionProps } from "framer-motion"
+import { systemTransition } from "./Nav"
 
 export function StandingsView({
   scope,
@@ -30,16 +31,17 @@ export function StandingsView({
     officialStandings
   )
 
-  const alternateBgColor =
-    standingsWithSystem.system === PointSystem.REGULAR
-      ? REGULAR_COLORS["--color-accent-secondary"]
-      : THREE_TWO_ONE_ZERO_COLORS["--color-accent-secondary"]
+  const [alternateRowBgColor, headerBgColor] = getSystemColors(
+    standingsWithSystem.system
+  )
 
   switch (scope) {
     case "League":
       return (
         <AnimatedViewWrapper>
-          <Header>League</Header>
+          <AnimatedHeader targetAccentColor={headerBgColor}>
+            League
+          </AnimatedHeader>
           <AnimatedTeams scopeKey={scope}>
             <TableHeader />
             {standingsWithChange.map((standing, i) => (
@@ -48,7 +50,7 @@ export function StandingsView({
                 rank={i + 1}
                 key={standing.teamCommonName.default}
                 shouldSlideTeam={systemChanged}
-                alternateBgColor={alternateBgColor}
+                alternateRowBgColor={alternateRowBgColor}
                 isOdd={i % 2 === 0}
               />
             ))}
@@ -70,7 +72,9 @@ export function StandingsView({
         <AnimatedViewWrapper>
           {Object.entries(conferences).map(([name, standings]) => (
             <ConferenceWrapper key={name}>
-              <Header>{name}</Header>
+              <AnimatedHeader targetAccentColor={headerBgColor}>
+                {name}
+              </AnimatedHeader>
               <AnimatedTeams scopeKey={name}>
                 <TableHeader />
                 {standings.map((standing, i) => (
@@ -80,7 +84,7 @@ export function StandingsView({
                     key={standing.teamCommonName.default}
                     shouldSlideTeam={systemChanged}
                     isOdd={i % 2 === 0}
-                    alternateBgColor={alternateBgColor}
+                    alternateRowBgColor={alternateRowBgColor}
                   />
                 ))}
               </AnimatedTeams>
@@ -115,7 +119,9 @@ export function StandingsView({
           {Object.entries(conferencesWithDivisions).map(
             ([conferenceName, divisions]) => (
               <ConferenceWrapper key={conferenceName}>
-                <Header>{conferenceName}</Header>
+                <AnimatedHeader targetAccentColor={headerBgColor}>
+                  {conferenceName}
+                </AnimatedHeader>
                 {Object.entries(divisions).map(([divisionName, division]) => (
                   <Division
                     name={divisionName}
@@ -123,7 +129,7 @@ export function StandingsView({
                     key={divisionName}
                     systemChanged={systemChanged}
                     scope={scope}
-                    alternateBgColor={alternateBgColor}
+                    alternateRowBgColor={alternateRowBgColor}
                   />
                 ))}
               </ConferenceWrapper>
@@ -170,7 +176,9 @@ export function StandingsView({
           {Object.entries(conferencesWithWildCard).map(
             ([conferenceName, { divisions, wildCard }]) => (
               <ConferenceWrapper key={conferenceName}>
-                <Header>{conferenceName}</Header>
+                <AnimatedHeader targetAccentColor={headerBgColor}>
+                  {conferenceName}
+                </AnimatedHeader>
                 {Object.entries(divisions).map(([divisionName, division]) => (
                   <Division
                     name={divisionName}
@@ -178,7 +186,7 @@ export function StandingsView({
                     key={divisionName}
                     systemChanged={systemChanged}
                     scope={scope}
-                    alternateBgColor={alternateBgColor}
+                    alternateRowBgColor={alternateRowBgColor}
                   />
                 ))}
                 <AnimatedSubHeader>Wild Card</AnimatedSubHeader>
@@ -191,7 +199,7 @@ export function StandingsView({
                         rank={i + 1}
                         shouldSlideTeam={systemChanged}
                         isOdd={i % 2 === 0}
-                        alternateBgColor={alternateBgColor}
+                        alternateRowBgColor={alternateRowBgColor}
                       />
                       {i === 1 && <Divider />}
                     </React.Fragment>
@@ -219,20 +227,20 @@ function AnimatedTeam({
   rank,
   shouldSlideTeam,
   isOdd,
-  alternateBgColor,
+  alternateRowBgColor,
 }: {
   standing: StandingWithChange
   rank: number
   shouldSlideTeam: boolean
   isOdd: boolean
-  alternateBgColor: string
+  alternateRowBgColor: string
 }): JSX.Element {
   return (
     <AnimatedTeamWrapper
       layoutId={standing.teamCommonName.default}
       layout="position"
       animate={{
-        backgroundColor: isOdd ? alternateBgColor : "rgba(255, 255, 255, 0)",
+        backgroundColor: isOdd ? alternateRowBgColor : "rgba(255, 255, 255, 0)",
       }}
       transition={
         shouldSlideTeam
@@ -340,18 +348,30 @@ function calculateStandingsWithChange(
   })
 }
 
+function getSystemColors(system: PointSystem): [string, string] {
+  return system === PointSystem.REGULAR
+    ? [
+        REGULAR_COLORS["--color-accent-tertiary"],
+        REGULAR_COLORS["--color-accent-secondary"],
+      ]
+    : [
+        THREE_TWO_ONE_ZERO_COLORS["--color-accent-tertiary"],
+        THREE_TWO_ONE_ZERO_COLORS["--color-accent-secondary"],
+      ]
+}
+
 function Division({
   name,
   standings,
   systemChanged,
   scope,
-  alternateBgColor,
+  alternateRowBgColor,
 }: {
   name: string
   standings: StandingWithChange[]
   systemChanged: boolean
   scope: Scope
-  alternateBgColor: string
+  alternateRowBgColor: string
 }): JSX.Element {
   return (
     <>
@@ -365,7 +385,7 @@ function Division({
             key={standing.teamCommonName.default}
             shouldSlideTeam={systemChanged}
             isOdd={i % 2 === 0}
-            alternateBgColor={alternateBgColor}
+            alternateRowBgColor={alternateRowBgColor}
           />
         ))}
       </AnimatedTeams>
@@ -415,10 +435,30 @@ function AnimatedTeams({
   )
 }
 
-const Header = styled.h1`
+function AnimatedHeader({
+  children,
+  targetAccentColor,
+}: {
+  children: React.ReactNode
+  targetAccentColor: string
+}) {
+  return (
+    <AnimatedHeaderWrapper
+      initial={false}
+      animate={{
+        backgroundColor: targetAccentColor,
+      }}
+      transition={systemTransition}
+    >
+      {children}
+    </AnimatedHeaderWrapper>
+  )
+}
+
+const AnimatedHeaderWrapper = styled(motion.h1)`
   font-size: 1.5rem;
   font-weight: bold;
-  background-color: var(--color-header-bg);
+  background-color: var(--color-accent-secondary);
   padding: 8px calc(50vw - 50% + 8px);
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
