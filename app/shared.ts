@@ -1,3 +1,4 @@
+import { MotionProps } from "framer-motion"
 import { z } from "zod"
 
 export const scopes = ["Wild Card", "Division", "Conference", "League"] as const
@@ -67,6 +68,8 @@ export const THREE_TWO_ONE_ZERO_COLORS = {
   "--color-accent-secondary": "hsla(251, 23%, 63%, 1)",
   "--color-accent-tertiary": "hsla(265, 100%, 96%, 0.8)",
   "--color-nav-bg": "hsla(0, 0%, 0%, 1)",
+  "--color-info-modal-bg": "hsla(270, 100%, 98%, 1)",
+  "--color-info-accent": "hsla(237, 84%, 63%, 1)",
 }
 
 // TODO(dse): make boring-er
@@ -79,8 +82,20 @@ export const REGULAR_COLORS = {
   "--color-accent-secondary": "hsla(240, 4%, 77%, 1)",
   "--color-accent-tertiary": "hsla(240, 4%, 97%, 1)",
   "--color-nav-bg": "hsla(0, 0%, 0%, 1)",
+  "--color-info-modal-bg": "hsla(270, 100%, 98%, 1)",
+  "--color-info-accent": "hsla(237, 84%, 63%, 1)",
 }
 
 export const CSS_VARS = {
   "--max-content-width": "1280px",
+}
+
+export const baseMotionProps: MotionProps = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -20 },
+  transition: {
+    duration: 0.4,
+    ease: [0.32, 0.72, 0, 1], // apple's default cubic-bezier
+  },
 }

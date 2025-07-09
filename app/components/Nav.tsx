@@ -1,6 +1,6 @@
 "use client"
 import styled from "styled-components"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import {
   PointSystem,
   REGULAR_COLORS,
@@ -9,6 +9,8 @@ import {
   THREE_TWO_ONE_ZERO_COLORS,
 } from "../shared"
 import { usePointSystem } from "./PointSystemProvider"
+import { useState } from "react"
+import InfoModal from "./InfoModal"
 
 export const systemTransition = { type: "spring", stiffness: 500, damping: 40 }
 
@@ -20,71 +22,86 @@ export default function Nav({
   setScope: (scope: Scope) => void
 }) {
   const { pointSystem, setPointSystem } = usePointSystem()
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
   const targetAccentColor =
     pointSystem === PointSystem.REGULAR
       ? REGULAR_COLORS["--color-accent"]
       : THREE_TWO_ONE_ZERO_COLORS["--color-accent"]
 
   return (
-    <Wrapper>
-      <ControlWrapper>
-        <SystemNavWrapper>
-          <SystemNav>
-            <AnimatedBackground
-              initial={false}
-              animate={{
-                x: pointSystem === PointSystem.REGULAR ? "0%" : "100%",
-                borderTopLeftRadius:
-                  pointSystem === PointSystem.REGULAR ? "8px" : "0px",
-                borderBottomLeftRadius:
-                  pointSystem === PointSystem.REGULAR ? "8px" : "0px",
-                borderTopRightRadius:
-                  pointSystem === PointSystem.THREE_TWO_ONE_ZERO
-                    ? "8px"
-                    : "0px",
-                borderBottomRightRadius:
-                  pointSystem === PointSystem.THREE_TWO_ONE_ZERO
-                    ? "8px"
-                    : "0px",
-                backgroundColor: targetAccentColor,
-              }}
-              transition={systemTransition}
+    <>
+      <AnimatePresence>
+        {isInfoModalOpen && (
+          <InfoModal onClose={() => setIsInfoModalOpen(false)} />
+        )}
+      </AnimatePresence>
+      <Wrapper>
+        <ControlWrapper>
+          <SystemNavWrapper>
+            <SystemNav>
+              <AnimatedBackground
+                initial={false}
+                animate={{
+                  x: pointSystem === PointSystem.REGULAR ? "0%" : "100%",
+                  borderTopLeftRadius:
+                    pointSystem === PointSystem.REGULAR ? "8px" : "0px",
+                  borderBottomLeftRadius:
+                    pointSystem === PointSystem.REGULAR ? "8px" : "0px",
+                  borderTopRightRadius:
+                    pointSystem === PointSystem.THREE_TWO_ONE_ZERO
+                      ? "8px"
+                      : "0px",
+                  borderBottomRightRadius:
+                    pointSystem === PointSystem.THREE_TWO_ONE_ZERO
+                      ? "8px"
+                      : "0px",
+                  backgroundColor: targetAccentColor,
+                }}
+                transition={systemTransition}
+              />
+              <RadioButtonWrapper>
+                <input
+                  type="radio"
+                  id={PointSystem.REGULAR}
+                  name="system"
+                  value={PointSystem.REGULAR}
+                  onChange={() => setPointSystem(PointSystem.REGULAR)}
+                  checked={pointSystem === PointSystem.REGULAR}
+                />
+                <SystemLabel htmlFor={PointSystem.REGULAR}>Regular</SystemLabel>
+              </RadioButtonWrapper>
+              <RadioButtonWrapper>
+                <input
+                  type="radio"
+                  id={PointSystem.THREE_TWO_ONE_ZERO}
+                  name="system"
+                  value={PointSystem.THREE_TWO_ONE_ZERO}
+                  checked={pointSystem === PointSystem.THREE_TWO_ONE_ZERO}
+                  onChange={() =>
+                    setPointSystem(PointSystem.THREE_TWO_ONE_ZERO)
+                  }
+                />
+                <SystemLabel htmlFor={PointSystem.THREE_TWO_ONE_ZERO}>
+                  3-2-1-0
+                </SystemLabel>
+              </RadioButtonWrapper>
+            </SystemNav>
+            <InfoWrapper>
+              <InfoButton onClick={() => setIsInfoModalOpen(true)}>
+                <QuestionMarkIcon />
+              </InfoButton>
+            </InfoWrapper>
+          </SystemNavWrapper>
+          <ScopeNavWrapper>
+            <ScopeNav
+              selectedScope={selectedScope}
+              setScope={setScope}
+              targetAccentColor={targetAccentColor}
             />
-            <RadioButtonWrapper>
-              <input
-                type="radio"
-                id={PointSystem.REGULAR}
-                name="system"
-                value={PointSystem.REGULAR}
-                onChange={() => setPointSystem(PointSystem.REGULAR)}
-                checked={pointSystem === PointSystem.REGULAR}
-              />
-              <SystemLabel htmlFor={PointSystem.REGULAR}>Regular</SystemLabel>
-            </RadioButtonWrapper>
-            <RadioButtonWrapper>
-              <input
-                type="radio"
-                id={PointSystem.THREE_TWO_ONE_ZERO}
-                name="system"
-                value={PointSystem.THREE_TWO_ONE_ZERO}
-                checked={pointSystem === PointSystem.THREE_TWO_ONE_ZERO}
-                onChange={() => setPointSystem(PointSystem.THREE_TWO_ONE_ZERO)}
-              />
-              <SystemLabel htmlFor={PointSystem.THREE_TWO_ONE_ZERO}>
-                3-2-1-0
-              </SystemLabel>
-            </RadioButtonWrapper>
-          </SystemNav>
-        </SystemNavWrapper>
-        <ScopeNavWrapper>
-          <ScopeNav
-            selectedScope={selectedScope}
-            setScope={setScope}
-            targetAccentColor={targetAccentColor}
-          />
-        </ScopeNavWrapper>
-      </ControlWrapper>
-    </Wrapper>
+          </ScopeNavWrapper>
+        </ControlWrapper>
+      </Wrapper>
+    </>
   )
 }
 
@@ -137,6 +154,26 @@ function ScopeNav({
   )
 }
 
+function QuestionMarkIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      width={24}
+      height={24}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"
+      />
+    </svg>
+  )
+}
+
 const BorderStyle = `
   border-bottom: 4px solid;
 `
@@ -167,10 +204,30 @@ const AnimatedBackground = styled(motion.div)`
 const SystemNavWrapper = styled.div`
   display: flex;
   justify-content: center;
+  gap: 12px;
   width: 100%;
   height: 100%;
   flex: 1;
 `
+
+const InfoWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const InfoButton = styled.button`
+  background-color: transparent;
+  border: none;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+`
+
 const SystemLabel = styled.label`
   width: 100%;
   text-align: center;
